@@ -61,11 +61,3 @@ export const artifacts = [
     Component: CaseStudyPackage,
   },
 ];
-
-export const auditHighlights = [
-  "V2 is the canonical system. It adds the DOCUMENTARY material register and PRODUCT type register that do not exist in the v1 specs.",
-  "The v1 matrix permits a warm gradient for dense data slides; the v2 changelog downgrades that move from density relief to optional.",
-  "Operational scope expands in v2 from broad defense communication into six explicit production categories plus subsystem inheritance for tactical interfaces.",
-  "Outlier governance tightens in v2: Swarm Aero Paradigm moves from 'kill or codify' to 'kill', and the Bloomberg composite is pushed into the R&D layer only.",
-  "The workspace had a duplicate file: 1_case_study_package.jsx matched case_study_package.jsx exactly.",
-];

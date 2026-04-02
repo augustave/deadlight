@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { artifacts, auditHighlights } from "./library.js";
+import { artifacts } from "./library.js";
 
 const groupedArtifacts = {
   v2: artifacts.filter((artifact) => artifact.group === "v2"),
@@ -34,11 +34,11 @@ export default function App() {
     <div className="app-shell">
       <aside className="app-sidebar">
         <div className="sidebar-block">
-          <div className="eyebrow">Workspace</div>
+          <div className="eyebrow">Library</div>
           <h1>DEADLIGHT</h1>
           <p className="sidebar-copy">
-            Reorganized into a versioned React viewer with the v2 rulebook as the
-            canonical source and the March 28 artifacts preserved as legacy references.
+            A focused viewer for the DEADLIGHT rulebook and its supporting legacy
+            artifacts.
           </p>
         </div>
 
@@ -73,14 +73,6 @@ export default function App() {
           ))}
         </div>
 
-        <div className="sidebar-block">
-          <div className="eyebrow">Audit Highlights</div>
-          <ul className="audit-list">
-            {auditHighlights.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
       </aside>
 
       <main className="app-main">
