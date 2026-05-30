@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { accent as hue, font, ground, border, text } from "../../tokens.js";
 
 const CASE_STUDY_FRAMEWORK = {
   structure: [
@@ -18,7 +19,7 @@ const CASE_STUDIES = [
     title: "THE AESTHETICS OF ALGORITHMIC WARFARE",
     subtitle: "How UI, UX, and art direction shape the modern battlespace.",
     status: "STRONGEST CANDIDATE",
-    statusColor: "#BFFF00",
+    statusColor: hue.chartreuse,
     context: {
       headline: "The defense industry's visual language is stuck in 2005.",
       body: "Every defense-tech startup and legacy prime uses the same visual vocabulary: navy backgrounds, abstract globe imagery, circuit-board patterns, and sans-serif type that signals 'technology' without communicating anything specific about what the technology does or why it matters. Meanwhile, the actual battlespace has become an information design problem — sensor fusion, kill chain compression, human-machine teaming all depend on interfaces that operators can read under cognitive load. The aesthetics aren't decorative. They're operational.",
@@ -70,7 +71,7 @@ const CASE_STUDIES = [
     title: "NAVIGATING THE ACQUISITION FRONTIER",
     subtitle: "Making the DARPA procurement ecosystem legible to non-traditional performers.",
     status: "STRONG — NEEDS FRAMING",
-    statusColor: "#7aafff",
+    statusColor: hue.blueLt,
     context: {
       headline: "The defense procurement ecosystem is deliberately illegible.",
       body: "DARPA's solicitation landscape — BAAs, SBIRs, Open Mic sessions, Proposers Days — is structurally designed for organizations that already understand it. Non-traditional performers and commercial startups face a double barrier: the technical complexity of the work itself, and the procedural complexity of the acquisition system that funds it. The information exists in public documents, but the architecture of those documents is hostile to first-time readers.",
@@ -116,7 +117,7 @@ const CASE_STUDIES = [
     title: "THE C2 BLUEPRINT",
     subtitle: "Designing legibility for autonomous fleet command and control.",
     status: "NEEDS CONSOLIDATION",
-    statusColor: "#c49a6c",
+    statusColor: hue.tan,
     context: {
       headline: "Autonomous systems generate more data than human command structures can process.",
       body: "The transition from piloted platforms to autonomous fleets doesn't just change the airframe — it changes the entire information architecture of command and control. A human operator supervising 40 autonomous vehicles needs an interface that compresses sensor data, swarm state, and threat environment into actionable reads at machine speed. The C2 software problem is, at its core, a design problem: what does the operator need to see, when, and at what fidelity?",
@@ -159,37 +160,43 @@ const CASE_STUDIES = [
   },
 ];
 
-export default function CaseStudyPackage() {
-  const [activeStudy, setActiveStudy] = useState("algorithmic-warfare");
+export default function CaseStudyPackage({ section: sectionProp, onSectionChange }) {
+  const [internalStudy, setInternalStudy] = useState("algorithmic-warfare");
   const [activeSection, setActiveSection] = useState("context");
+
+  const activeStudy = sectionProp ?? internalStudy;
+  const selectStudy = (id) => {
+    (onSectionChange ?? setInternalStudy)(id);
+    setActiveSection("context");
+  };
 
   const study = CASE_STUDIES.find(s => s.id === activeStudy);
 
   return (
     <div style={{
-      fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
-      background: "#0d0d0d",
-      color: "#c8c8c8",
+      fontFamily: font.mono,
+      background: ground.canvas,
+      color: text.body,
       minHeight: "100vh",
       padding: "32px 24px",
       boxSizing: "border-box",
     }}>
       {/* Header */}
-      <div style={{ borderBottom: "1px solid #333", paddingBottom: 24, marginBottom: 32 }}>
-        <div style={{ fontSize: 10, letterSpacing: 4, color: "#666", marginBottom: 8 }}>
+      <div style={{ borderBottom: `1px solid ${border.strong}`, paddingBottom: 24, marginBottom: 32 }}>
+        <div style={{ fontSize: 10, letterSpacing: 4, color: text.faint, marginBottom: 8 }}>
           ANP STUDIO // CASE STUDY PACKAGE
         </div>
         <h1 style={{
-          fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+          fontFamily: font.display,
           fontWeight: 900,
           fontSize: 28,
-          color: "#f0f0f0",
+          color: text.hi,
           margin: 0,
           letterSpacing: -1,
         }}>
           THREE CASE STUDIES
         </h1>
-        <div style={{ fontSize: 10, color: "#555", marginTop: 8, letterSpacing: 2 }}>
+        <div style={{ fontSize: 10, color: text.fainter, marginTop: 8, letterSpacing: 2 }}>
           STRATEGIC PROBLEM → VISUAL ARGUMENT → OUTCOME
         </div>
       </div>
@@ -199,11 +206,11 @@ export default function CaseStudyPackage() {
         {CASE_STUDIES.map(cs => (
           <button
             key={cs.id}
-            onClick={() => { setActiveStudy(cs.id); setActiveSection("context"); }}
+            onClick={() => selectStudy(cs.id)}
             style={{
               flex: 1,
-              background: activeStudy === cs.id ? "#151515" : "#0a0a0a",
-              border: `1px solid ${activeStudy === cs.id ? "#333" : "#1a1a1a"}`,
+              background: activeStudy === cs.id ? ground.raised : ground.inset,
+              border: `1px solid ${activeStudy === cs.id ? border.strong : border.subtle}`,
               padding: 16,
               cursor: "pointer",
               textAlign: "left",
@@ -220,16 +227,16 @@ export default function CaseStudyPackage() {
               CASE {cs.number}
             </div>
             <div style={{
-              fontFamily: "'Arial Black', sans-serif",
+              fontFamily: font.display,
               fontWeight: 900,
               fontSize: 12,
-              color: activeStudy === cs.id ? "#e0e0e0" : "#777",
+              color: activeStudy === cs.id ? text.bright : text.dim,
               marginBottom: 4,
               lineHeight: 1.3,
             }}>
               {cs.title}
             </div>
-            <div style={{ fontSize: 9, color: "#555" }}>{cs.subtitle}</div>
+            <div style={{ fontSize: 9, color: text.fainter }}>{cs.subtitle}</div>
             <div style={{
               fontSize: 8,
               letterSpacing: 2,
@@ -251,7 +258,7 @@ export default function CaseStudyPackage() {
         display: "flex",
         gap: 0,
         marginBottom: 24,
-        borderBottom: "1px solid #222",
+        borderBottom: `1px solid ${border.mid}`,
         flexWrap: "wrap",
       }}>
         {CASE_STUDY_FRAMEWORK.structure.map(s => (
@@ -259,10 +266,10 @@ export default function CaseStudyPackage() {
             key={s.id}
             onClick={() => setActiveSection(s.id)}
             style={{
-              background: activeSection === s.id ? "#1a1a1a" : "transparent",
-              color: activeSection === s.id ? "#BFFF00" : "#555",
-              border: "1px solid #222",
-              borderBottom: activeSection === s.id ? "1px solid #0d0d0d" : "1px solid #222",
+              background: activeSection === s.id ? border.subtle : "transparent",
+              color: activeSection === s.id ? hue.chartreuse : text.fainter,
+              border: `1px solid ${border.mid}`,
+              borderBottom: activeSection === s.id ? `1px solid ${ground.canvas}` : `1px solid ${border.mid}`,
               padding: "8px 12px",
               fontSize: 9,
               letterSpacing: 1.5,
@@ -280,7 +287,7 @@ export default function CaseStudyPackage() {
       {/* Section Description */}
       <div style={{
         fontSize: 10,
-        color: "#555",
+        color: text.fainter,
         marginBottom: 20,
         fontStyle: "italic",
       }}>
@@ -291,10 +298,10 @@ export default function CaseStudyPackage() {
       {activeSection === "context" && study && (
         <div>
           <div style={{
-            fontFamily: "'Arial Black', sans-serif",
+            fontFamily: font.display,
             fontWeight: 900,
             fontSize: 20,
-            color: "#e0e0e0",
+            color: text.bright,
             marginBottom: 16,
             lineHeight: 1.3,
           }}>
@@ -302,7 +309,7 @@ export default function CaseStudyPackage() {
           </div>
           <div style={{
             fontSize: 12,
-            color: "#999",
+            color: text.secondary,
             lineHeight: 1.8,
             marginBottom: 20,
             maxWidth: 680,
@@ -310,16 +317,16 @@ export default function CaseStudyPackage() {
             {study.context.body}
           </div>
           <div style={{
-            background: "#0a0a0a",
-            border: "1px solid #1a1a1a",
-            borderLeft: "3px solid #FF2D55",
+            background: ground.inset,
+            border: `1px solid ${border.subtle}`,
+            borderLeft: `3px solid ${hue.red}`,
             padding: 16,
             maxWidth: 680,
           }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#FF2D55", marginBottom: 8 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.red, marginBottom: 8 }}>
               THE TENSION
             </div>
-            <div style={{ fontSize: 12, color: "#ccc", lineHeight: 1.7 }}>
+            <div style={{ fontSize: 12, color: text.primary, lineHeight: 1.7 }}>
               {study.context.tension}
             </div>
           </div>
@@ -329,17 +336,17 @@ export default function CaseStudyPackage() {
       {/* THE BRIEF */}
       {activeSection === "brief" && study && (
         <div style={{ display: "grid", gap: 16, maxWidth: 680 }}>
-          <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", padding: 16 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#666", marginBottom: 8 }}>STATED BRIEF</div>
-            <div style={{ fontSize: 12, color: "#999", lineHeight: 1.7 }}>{study.brief.stated}</div>
+          <div style={{ background: ground.inset, border: `1px solid ${border.subtle}`, padding: 16 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: text.faint, marginBottom: 8 }}>STATED BRIEF</div>
+            <div style={{ fontSize: 12, color: text.secondary, lineHeight: 1.7 }}>{study.brief.stated}</div>
           </div>
-          <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderLeft: "3px solid #BFFF00", padding: 16 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 8 }}>ACTUAL PROBLEM</div>
-            <div style={{ fontSize: 12, color: "#ccc", lineHeight: 1.7 }}>{study.brief.actual}</div>
+          <div style={{ background: ground.inset, border: `1px solid ${border.subtle}`, borderLeft: `3px solid ${hue.chartreuse}`, padding: 16 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 8 }}>ACTUAL PROBLEM</div>
+            <div style={{ fontSize: 12, color: text.primary, lineHeight: 1.7 }}>{study.brief.actual}</div>
           </div>
-          <div style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", padding: 16 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#FF2D55", marginBottom: 8 }}>THE GAP</div>
-            <div style={{ fontSize: 12, color: "#999", lineHeight: 1.7 }}>{study.brief.gap}</div>
+          <div style={{ background: ground.inset, border: `1px solid ${border.subtle}`, padding: 16 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.red, marginBottom: 8 }}>THE GAP</div>
+            <div style={{ fontSize: 12, color: text.secondary, lineHeight: 1.7 }}>{study.brief.gap}</div>
           </div>
         </div>
       )}
@@ -349,22 +356,22 @@ export default function CaseStudyPackage() {
         <div style={{ display: "grid", gap: 16, maxWidth: 720 }}>
           {study.argument.map((a, i) => (
             <div key={i} style={{
-              background: "#0a0a0a",
-              border: "1px solid #1a1a1a",
+              background: ground.inset,
+              border: `1px solid ${border.subtle}`,
               padding: 20,
             }}>
               <div style={{
-                fontFamily: "'Arial Black', sans-serif",
+                fontFamily: font.display,
                 fontWeight: 900,
                 fontSize: 13,
-                color: "#e0e0e0",
+                color: text.bright,
                 marginBottom: 10,
               }}>
                 {a.decision}
               </div>
               <div style={{
                 fontSize: 11,
-                color: "#999",
+                color: text.secondary,
                 lineHeight: 1.7,
                 marginBottom: 12,
               }}>
@@ -373,7 +380,7 @@ export default function CaseStudyPackage() {
               <div style={{
                 fontSize: 9,
                 letterSpacing: 2,
-                color: "#BFFF00",
+                color: hue.chartreuse,
                 padding: "4px 8px",
                 background: "rgba(191,255,0,0.05)",
                 border: "1px solid rgba(191,255,0,0.15)",
@@ -394,36 +401,36 @@ export default function CaseStudyPackage() {
               display: "grid",
               gridTemplateColumns: "48px 1fr",
               gap: 16,
-              background: "#0a0a0a",
-              border: "1px solid #1a1a1a",
+              background: ground.inset,
+              border: `1px solid ${border.subtle}`,
               padding: 16,
               alignItems: "start",
             }}>
               <div style={{
                 width: 48,
                 height: 48,
-                background: "#111",
-                border: "1px solid #222",
+                background: border.faint,
+                border: `1px solid ${border.mid}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: 9,
-                color: "#444",
+                color: text.ghost,
                 letterSpacing: 2,
               }}>
                 IMG
               </div>
               <div>
                 <div style={{
-                  fontFamily: "'Arial Black', sans-serif",
+                  fontFamily: font.display,
                   fontWeight: 900,
                   fontSize: 12,
-                  color: "#e0e0e0",
+                  color: text.bright,
                   marginBottom: 6,
                 }}>
                   {f.name}
                 </div>
-                <div style={{ fontSize: 11, color: "#888", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 11, color: text.muted, lineHeight: 1.6 }}>
                   {f.desc}
                 </div>
               </div>
@@ -431,10 +438,10 @@ export default function CaseStudyPackage() {
           ))}
           <div style={{
             fontSize: 10,
-            color: "#444",
+            color: text.ghost,
             marginTop: 8,
             padding: 12,
-            border: "1px dashed #222",
+            border: `1px dashed ${border.mid}`,
             textAlign: "center",
           }}>
             Replace IMG placeholders with actual frame crops from the presentation files.
@@ -447,17 +454,17 @@ export default function CaseStudyPackage() {
       {activeSection === "system" && study && (
         <div style={{ maxWidth: 680 }}>
           <div style={{
-            background: "#0a0a0a",
-            border: "1px solid #1a1a1a",
-            borderLeft: "3px solid #BFFF00",
+            background: ground.inset,
+            border: `1px solid ${border.subtle}`,
+            borderLeft: `3px solid ${hue.chartreuse}`,
             padding: 20,
           }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 12 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               WHAT THIS PROJECT PROVES
             </div>
             <div style={{
               fontSize: 12,
-              color: "#ccc",
+              color: text.primary,
               lineHeight: 1.8,
             }}>
               {study.systemsProof}
@@ -470,20 +477,20 @@ export default function CaseStudyPackage() {
       {activeSection === "outcome" && study && (
         <div style={{ display: "grid", gap: 12, maxWidth: 680 }}>
           {[
-            { label: "DIRECT OUTCOME", value: study.outcome.direct, accent: "#BFFF00" },
-            { label: "CAPABILITY BUILT", value: study.outcome.capability, accent: "#7aafff" },
-            { label: "POSITION ESTABLISHED", value: study.outcome.position, accent: "#c49a6c" },
+            { label: "DIRECT OUTCOME", value: study.outcome.direct, accent: hue.chartreuse },
+            { label: "CAPABILITY BUILT", value: study.outcome.capability, accent: hue.blueLt },
+            { label: "POSITION ESTABLISHED", value: study.outcome.position, accent: hue.tan },
           ].map(o => (
             <div key={o.label} style={{
-              background: "#0a0a0a",
-              border: "1px solid #1a1a1a",
+              background: ground.inset,
+              border: `1px solid ${border.subtle}`,
               borderLeft: `3px solid ${o.accent}`,
               padding: 16,
             }}>
               <div style={{ fontSize: 9, letterSpacing: 3, color: o.accent, marginBottom: 8 }}>
                 {o.label}
               </div>
-              <div style={{ fontSize: 12, color: "#ccc", lineHeight: 1.7 }}>
+              <div style={{ fontSize: 12, color: text.primary, lineHeight: 1.7 }}>
                 {o.value}
               </div>
             </div>
@@ -493,11 +500,11 @@ export default function CaseStudyPackage() {
 
       {/* Writing Notes */}
       <div style={{
-        borderTop: "1px solid #222",
+        borderTop: `1px solid ${border.mid}`,
         marginTop: 40,
         paddingTop: 20,
       }}>
-        <div style={{ fontSize: 9, letterSpacing: 3, color: "#444", marginBottom: 12 }}>
+        <div style={{ fontSize: 9, letterSpacing: 3, color: text.ghost, marginBottom: 12 }}>
           PRODUCTION NOTES
         </div>
         <div style={{
@@ -505,15 +512,15 @@ export default function CaseStudyPackage() {
           gridTemplateColumns: "1fr 1fr",
           gap: 12,
           fontSize: 10,
-          color: "#555",
+          color: text.fainter,
           lineHeight: 1.6,
         }}>
-          <div style={{ background: "#0a0a0a", padding: 12, border: "1px solid #1a1a1a" }}>
-            <div style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>FORMAT</div>
+          <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
+            <div style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>FORMAT</div>
             Each case study should be 800-1200 words when written out. Web format (portfolio page or long-scroll) is primary. PDF export for leave-behinds. The artifact framework above provides the skeleton — the writing needs to be tight, specific, and free of design jargon that doesn't serve a strategic audience.
           </div>
-          <div style={{ background: "#0a0a0a", padding: 12, border: "1px solid #1a1a1a" }}>
-            <div style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>COMPANION PIECE</div>
+          <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
+            <div style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2, marginBottom: 6 }}>COMPANION PIECE</div>
             The defense branding article ("Systems Thinking at the Edge" / legibility thesis) should link to these case studies as evidence. Each case study should link back to the article as theoretical framing. Together they form a closed argument loop: thesis → evidence → thesis.
           </div>
         </div>
@@ -521,13 +528,13 @@ export default function CaseStudyPackage() {
 
       {/* Footer */}
       <div style={{
-        borderTop: "1px solid #1a1a1a",
+        borderTop: `1px solid ${border.subtle}`,
         marginTop: 32,
         paddingTop: 16,
         display: "flex",
         justifyContent: "space-between",
         fontSize: 9,
-        color: "#333",
+        color: border.strong,
         letterSpacing: 2,
       }}>
         <span>SYSTEM_REF: CASE_STUDY_PKG_V1</span>

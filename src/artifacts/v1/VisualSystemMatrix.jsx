@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { accent as hue, font, ground, border, text } from "../../tokens.js";
 
 const CONTENT_FUNCTIONS = [
   {
@@ -131,8 +132,10 @@ const OUTLIERS = [
   { frame: "100,000x Leap (prismatic)", issue: "Holographic refraction overlay is visually stunning but stylistically orphaned from the rest of the system.", verdict: "CINEMATIC VARIANT", recommendation: "File under CINEMATIC register. Prismatic/refraction effects permitted for compute/AI scaling content only. Not a general-purpose treatment." },
 ];
 
-export default function VisualSystemMatrix() {
-  const [activeSection, setActiveSection] = useState("matrix");
+export default function VisualSystemMatrix({ section: sectionProp, onSectionChange }) {
+  const [internal, setInternal] = useState("matrix");
+  const activeSection = sectionProp ?? internal;
+  const setActiveSection = onSectionChange ?? setInternal;
   const [expandedRow, setExpandedRow] = useState(null);
 
   const sections = [
@@ -145,35 +148,35 @@ export default function VisualSystemMatrix() {
 
   return (
     <div style={{
-      fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
-      background: "#0d0d0d",
-      color: "#c8c8c8",
+      fontFamily: font.mono,
+      background: ground.canvas,
+      color: text.body,
       minHeight: "100vh",
       padding: "32px 24px",
       boxSizing: "border-box",
     }}>
       {/* Header */}
-      <div style={{ borderBottom: "1px solid #333", paddingBottom: 24, marginBottom: 32 }}>
-        <div style={{ fontSize: 10, letterSpacing: 4, color: "#666", marginBottom: 8 }}>
+      <div style={{ borderBottom: `1px solid ${border.strong}`, paddingBottom: 24, marginBottom: 32 }}>
+        <div style={{ fontSize: 10, letterSpacing: 4, color: text.faint, marginBottom: 8 }}>
           ANP STUDIO // VISUAL SYSTEM SPECIFICATION
         </div>
         <h1 style={{
-          fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+          fontFamily: font.display,
           fontWeight: 900,
           fontSize: 32,
-          color: "#f0f0f0",
+          color: text.hi,
           margin: 0,
           letterSpacing: -1,
           lineHeight: 1.1,
         }}>
           DECISION MATRIX
         </h1>
-        <div style={{ fontSize: 10, color: "#555", marginTop: 8, letterSpacing: 2 }}>
+        <div style={{ fontSize: 10, color: text.fainter, marginTop: 8, letterSpacing: 2 }}>
           STATUS: DRAFT // VERSION: 1.0.0 // DATE: 2026-03-28
         </div>
         <div style={{
           fontSize: 11,
-          color: "#888",
+          color: text.muted,
           marginTop: 16,
           maxWidth: 640,
           lineHeight: 1.6,
@@ -189,7 +192,7 @@ export default function VisualSystemMatrix() {
         display: "flex",
         gap: 0,
         marginBottom: 32,
-        borderBottom: "1px solid #222",
+        borderBottom: `1px solid ${border.mid}`,
         flexWrap: "wrap",
       }}>
         {sections.map(s => (
@@ -197,10 +200,10 @@ export default function VisualSystemMatrix() {
             key={s.id}
             onClick={() => setActiveSection(s.id)}
             style={{
-              background: activeSection === s.id ? "#1a1a1a" : "transparent",
-              color: activeSection === s.id ? "#BFFF00" : "#666",
-              border: "1px solid #222",
-              borderBottom: activeSection === s.id ? "1px solid #0d0d0d" : "1px solid #222",
+              background: activeSection === s.id ? border.subtle : "transparent",
+              color: activeSection === s.id ? hue.chartreuse : text.faint,
+              border: `1px solid ${border.mid}`,
+              borderBottom: activeSection === s.id ? `1px solid ${ground.canvas}` : `1px solid ${border.mid}`,
               padding: "10px 16px",
               fontSize: 10,
               letterSpacing: 2,
@@ -218,16 +221,16 @@ export default function VisualSystemMatrix() {
       {/* CONTENT → DECISIONS MATRIX */}
       {activeSection === "matrix" && (
         <div>
-          <div style={{ fontSize: 10, color: "#555", marginBottom: 16, letterSpacing: 2 }}>
+          <div style={{ fontSize: 10, color: text.fainter, marginBottom: 16, letterSpacing: 2 }}>
             7 CONTENT FUNCTIONS — CLICK TO EXPAND
           </div>
           {CONTENT_FUNCTIONS.map((fn, i) => {
             const isOpen = expandedRow === fn.id;
             return (
               <div key={fn.id} style={{
-                border: "1px solid " + (isOpen ? "#333" : "#1a1a1a"),
+                border: "1px solid " + (isOpen ? border.strong : border.subtle),
                 marginBottom: 2,
-                background: isOpen ? "#111" : "#0d0d0d",
+                background: isOpen ? border.faint : ground.canvas,
                 transition: "all 0.2s ease",
               }}>
                 <div
@@ -242,33 +245,33 @@ export default function VisualSystemMatrix() {
                 >
                   <span style={{
                     fontSize: 10,
-                    color: "#BFFF00",
+                    color: hue.chartreuse,
                     fontFamily: "inherit",
                     minWidth: 24,
                   }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span style={{
-                    fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                    fontFamily: font.display,
                     fontWeight: 900,
                     fontSize: 14,
-                    color: "#e0e0e0",
+                    color: text.bright,
                     letterSpacing: 1,
                     flex: 1,
                   }}>
                     {fn.name}
                   </span>
-                  <span style={{ fontSize: 10, color: "#555" }}>
+                  <span style={{ fontSize: 10, color: text.fainter }}>
                     {fn.description}
                   </span>
-                  <span style={{ color: "#444", fontSize: 14, marginLeft: 8 }}>
+                  <span style={{ color: text.ghost, fontSize: 14, marginLeft: 8 }}>
                     {isOpen ? "−" : "+"}
                   </span>
                 </div>
 
                 {isOpen && (
                   <div style={{ padding: "0 16px 20px 56px" }}>
-                    <div style={{ fontSize: 10, color: "#555", marginBottom: 16 }}>
+                    <div style={{ fontSize: 10, color: text.fainter, marginBottom: 16 }}>
                       EXAMPLES: {fn.examples}
                     </div>
                     <div style={{
@@ -283,30 +286,30 @@ export default function VisualSystemMatrix() {
                         { label: "COMPOSITION", value: fn.composition, note: fn.compositionNote },
                       ].map(cell => (
                         <div key={cell.label} style={{
-                          background: "#0a0a0a",
-                          border: "1px solid #1a1a1a",
+                          background: ground.inset,
+                          border: `1px solid ${border.subtle}`,
                           padding: 12,
                         }}>
                           <div style={{
                             fontSize: 9,
                             letterSpacing: 3,
-                            color: "#BFFF00",
+                            color: hue.chartreuse,
                             marginBottom: 6,
                           }}>
                             {cell.label}
                           </div>
                           <div style={{
                             fontSize: 12,
-                            color: "#e0e0e0",
+                            color: text.bright,
                             fontWeight: 600,
                             marginBottom: 6,
-                            fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                            fontFamily: font.display,
                           }}>
                             {cell.value}
                           </div>
                           <div style={{
                             fontSize: 10,
-                            color: "#777",
+                            color: text.dim,
                             lineHeight: 1.5,
                           }}>
                             {cell.note}
@@ -327,37 +330,37 @@ export default function VisualSystemMatrix() {
         <div style={{ display: "grid", gap: 16 }}>
           {TYPE_REGISTERS.map((t, i) => (
             <div key={t.name} style={{
-              border: "1px solid #1a1a1a",
+              border: `1px solid ${border.subtle}`,
               padding: 20,
               display: "grid",
               gridTemplateColumns: "160px 1fr",
               gap: 20,
             }}>
               <div>
-                <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 8 }}>
+                <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 8 }}>
                   REGISTER {String(i + 1).padStart(2, "0")}
                 </div>
                 <div style={{
-                  fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                  fontFamily: font.display,
                   fontWeight: 900,
                   fontSize: 18,
-                  color: "#e0e0e0",
+                  color: text.bright,
                   marginBottom: 8,
                 }}>
                   {t.name}
                 </div>
-                <div style={{ fontSize: 10, color: "#555" }}>
+                <div style={{ fontSize: 10, color: text.fainter }}>
                   {t.weight}
                 </div>
-                <div style={{ fontSize: 10, color: "#555" }}>
+                <div style={{ fontSize: 10, color: text.fainter }}>
                   {t.size}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.6, marginBottom: 8 }}>
+                <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>
                   {t.desc}
                 </div>
-                <div style={{ fontSize: 10, color: "#666" }}>
+                <div style={{ fontSize: 10, color: text.faint }}>
                   USAGE: {t.usage}
                 </div>
               </div>
@@ -371,23 +374,23 @@ export default function VisualSystemMatrix() {
         <div style={{ display: "grid", gap: 16 }}>
           {MATERIAL_REGISTERS.map((m, i) => (
             <div key={m.name} style={{
-              border: "1px solid #1a1a1a",
+              border: `1px solid ${border.subtle}`,
               padding: 20,
             }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 10 }}>
-                <span style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00" }}>
+                <span style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span style={{
-                  fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                  fontFamily: font.display,
                   fontWeight: 900,
                   fontSize: 18,
-                  color: "#e0e0e0",
+                  color: text.bright,
                 }}>
                   {m.name}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.6, marginBottom: 12 }}>
+              <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 12 }}>
                 {m.desc}
               </div>
               <div style={{
@@ -395,13 +398,13 @@ export default function VisualSystemMatrix() {
                 gridTemplateColumns: "1fr 1fr",
                 gap: 12,
               }}>
-                <div style={{ background: "#0a0a0a", padding: 12, border: "1px solid #1a1a1a" }}>
-                  <div style={{ fontSize: 9, letterSpacing: 3, color: "#666", marginBottom: 4 }}>WHEN</div>
-                  <div style={{ fontSize: 11, color: "#999", lineHeight: 1.5 }}>{m.when}</div>
+                <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
+                  <div style={{ fontSize: 9, letterSpacing: 3, color: text.faint, marginBottom: 4 }}>WHEN</div>
+                  <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div>
                 </div>
-                <div style={{ background: "#0a0a0a", padding: 12, border: "1px solid #1a1a1a" }}>
-                  <div style={{ fontSize: 9, letterSpacing: 3, color: "#FF2D55", marginBottom: 4 }}>RISK</div>
-                  <div style={{ fontSize: 11, color: "#999", lineHeight: 1.5 }}>{m.risk}</div>
+                <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
+                  <div style={{ fontSize: 9, letterSpacing: 3, color: hue.red, marginBottom: 4 }}>RISK</div>
+                  <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div>
                 </div>
               </div>
             </div>
@@ -412,13 +415,13 @@ export default function VisualSystemMatrix() {
       {/* COLOR PROTOCOL */}
       {activeSection === "color" && (
         <div>
-          <div style={{ fontSize: 10, color: "#555", marginBottom: 20, letterSpacing: 2, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 10, color: text.fainter, marginBottom: 20, letterSpacing: 2, lineHeight: 1.6 }}>
             THREE-ACCENT SYSTEM ON A TWO-TONE BASE. ACCENTS ARE FUNCTIONAL, NEVER DECORATIVE.
           </div>
           <div style={{ display: "grid", gap: 12 }}>
             {COLOR_RULES.map(c => (
               <div key={c.name} style={{
-                border: "1px solid #1a1a1a",
+                border: `1px solid ${border.subtle}`,
                 padding: 20,
                 display: "grid",
                 gridTemplateColumns: "48px 1fr",
@@ -430,19 +433,19 @@ export default function VisualSystemMatrix() {
                   height: 48,
                   borderRadius: 4,
                   background: c.swatch,
-                  border: c.swatch === "#0d0d0d" || c.swatch === "#1a1a1a" ? "1px solid #333" : "none",
+                  border: c.swatch === ground.canvas || c.swatch === "#1a1a1a" ? `1px solid ${border.strong}` : "none",
                 }} />
                 <div>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
                     <span style={{
-                      fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                      fontFamily: font.display,
                       fontWeight: 900,
                       fontSize: 14,
-                      color: "#e0e0e0",
+                      color: text.bright,
                     }}>
                       {c.name}
                     </span>
-                    <span style={{ fontSize: 10, color: "#555", letterSpacing: 2 }}>
+                    <span style={{ fontSize: 10, color: text.fainter, letterSpacing: 2 }}>
                       {c.swatch}
                     </span>
                   </div>
@@ -451,17 +454,17 @@ export default function VisualSystemMatrix() {
                     letterSpacing: 2,
                     color: c.swatch === "#BFFF00" ? "#BFFF00" :
                            c.swatch === "#FF2D55" ? "#FF2D55" :
-                           c.swatch === "#007AFF" ? "#007AFF" : "#666",
+                           c.swatch === "#007AFF" ? "#007AFF" : text.faint,
                     marginBottom: 8,
                   }}>
                     {c.role}
                   </div>
-                  <div style={{ fontSize: 11, color: "#999", lineHeight: 1.6, marginBottom: 8 }}>
+                  <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.6, marginBottom: 8 }}>
                     {c.rule}
                   </div>
                   <div style={{
                     fontSize: 10,
-                    color: "#FF2D55",
+                    color: hue.red,
                     opacity: 0.7,
                     lineHeight: 1.5,
                   }}>
@@ -477,21 +480,21 @@ export default function VisualSystemMatrix() {
       {/* OUTLIER AUDIT */}
       {activeSection === "outliers" && (
         <div>
-          <div style={{ fontSize: 10, color: "#555", marginBottom: 20, letterSpacing: 2, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 10, color: text.fainter, marginBottom: 20, letterSpacing: 2, lineHeight: 1.6 }}>
             FRAMES THAT BREAK THE CURRENT SYSTEM. EACH NEEDS A VERDICT: CODIFY, VARIANT, OR KILL.
           </div>
           <div style={{ display: "grid", gap: 16 }}>
             {OUTLIERS.map(o => (
               <div key={o.frame} style={{
-                border: "1px solid #1a1a1a",
+                border: `1px solid ${border.subtle}`,
                 padding: 20,
               }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 10 }}>
                   <span style={{
-                    fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+                    fontFamily: font.display,
                     fontWeight: 900,
                     fontSize: 14,
-                    color: "#e0e0e0",
+                    color: text.bright,
                   }}>
                     {o.frame}
                   </span>
@@ -503,8 +506,8 @@ export default function VisualSystemMatrix() {
                                o.verdict.includes("VARIANT") ? "rgba(191,255,0,0.1)" :
                                "rgba(0,122,255,0.1)",
                     color: o.verdict === "KILL or CODIFY" ? "#FF2D55" :
-                           o.verdict.includes("VARIANT") ? "#BFFF00" :
-                           "#007AFF",
+                           o.verdict.includes("VARIANT") ? hue.chartreuse :
+                           hue.blue,
                     border: "1px solid " + (o.verdict === "KILL or CODIFY" ? "rgba(255,45,85,0.3)" :
                             o.verdict.includes("VARIANT") ? "rgba(191,255,0,0.2)" :
                             "rgba(0,122,255,0.2)"),
@@ -512,18 +515,18 @@ export default function VisualSystemMatrix() {
                     {o.verdict}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: "#999", lineHeight: 1.6, marginBottom: 12 }}>
-                  <strong style={{ color: "#aaa" }}>Issue:</strong> {o.issue}
+                <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.6, marginBottom: 12 }}>
+                  <strong style={{ color: text.soft }}>Issue:</strong> {o.issue}
                 </div>
                 <div style={{
                   fontSize: 11,
-                  color: "#888",
+                  color: text.muted,
                   lineHeight: 1.6,
-                  background: "#0a0a0a",
+                  background: ground.inset,
                   padding: 12,
-                  border: "1px solid #1a1a1a",
+                  border: `1px solid ${border.subtle}`,
                 }}>
-                  <span style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2 }}>RECOMMENDATION: </span>
+                  <span style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2 }}>RECOMMENDATION: </span>
                   {o.recommendation}
                 </div>
               </div>
@@ -534,13 +537,13 @@ export default function VisualSystemMatrix() {
 
       {/* Footer */}
       <div style={{
-        borderTop: "1px solid #1a1a1a",
+        borderTop: `1px solid ${border.subtle}`,
         marginTop: 40,
         paddingTop: 16,
         display: "flex",
         justifyContent: "space-between",
         fontSize: 9,
-        color: "#333",
+        color: border.strong,
         letterSpacing: 2,
       }}>
         <span>SYSTEM_REF: VISUAL_OPERATING_MATRIX_V1</span>
