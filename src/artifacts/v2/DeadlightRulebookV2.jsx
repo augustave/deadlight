@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { accent as hue, material, base, ground, border, text, font, fnColor, intColor } from "../../tokens.js";
+import { accent as hue, material, ground, border, text, font, scale, fnColor, intColor } from "../../tokens.js";
 import { Tag, Card, SectionHead, RuleRow } from "../../components/primitives.jsx";
+import { MaterialSpecimen, TypeSpecimen } from "../../components/specimens.jsx";
+import { useViewport } from "../../useViewport.js";
 
 // ═══════════════════════════════════════════
 // DEADLIGHT V2.0.0 — COMPLETE RULEBOOK
@@ -287,6 +289,8 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
   const [internal, setInternal] = useState("identity");
   const section = sectionProp ?? internal;
   const setSection = onSectionChange ?? setInternal;
+  const { narrow } = useViewport();
+  const triCol = narrow ? "1fr" : "1fr 1fr 1fr";
 
   return (
     <div style={{ fontFamily: font.mono, background: ground.canvas, color: text.body, minHeight: "100vh", padding: "24px 20px", boxSizing: "border-box" }}>
@@ -322,23 +326,26 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
 
       {/* ═══ IDENTITY ═══ */}
       {section === "identity" && (
-        <div style={{ maxWidth: 640 }}>
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="IDENTITY" sub="Etymology, thesis, operational scope" />
           <Card accent={hue.chartreuse} style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: font.serif, fontSize: 14, fontStyle: "italic", color: text.secondary, marginBottom: 8 }}>
-              dead·light <span style={{ fontStyle: "normal", color: text.fainter }}>/ˈdedˌlīt/</span>
+            <div style={{ fontFamily: font.serif, fontSize: scale.sub, fontStyle: "italic", color: text.secondary, marginBottom: 8 }}>
+              dead·light <span style={{ fontStyle: "normal", color: text.label }}>/ˈdedˌlīt/</span>
             </div>
-            <div style={{ fontFamily: font.serif, fontSize: 12, color: text.dim, lineHeight: 1.8, marginBottom: 12 }}>
-              <span style={{ fontStyle: "italic", color: text.fainter }}>noun, nautical.</span> A fixed porthole cover fitted over a ship's window to protect against water ingress while maintaining controlled visibility. What passes through is deliberate.
+            <div style={{ fontFamily: font.serif, fontSize: scale.body, color: text.soft, lineHeight: 1.8, marginBottom: 12 }}>
+              <span style={{ fontStyle: "italic", color: text.label }}>noun, nautical.</span> A fixed porthole cover fitted over a ship's window to protect against water ingress while maintaining controlled visibility. What passes through is deliberate.
             </div>
           </Card>
-          <Card accent={hue.chartreuse} style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 8 }}>CORE THESIS</div>
-            <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright, lineHeight: 1.4 }}>Making invisible structure visible under pressure.</div>
-          </Card>
+          {/* COMMAND-scale thesis moment — Principle 04, edge-to-edge, cannot be skimmed. */}
+          <div style={{ borderLeft: `3px solid ${hue.chartreuse}`, padding: "22px 20px", marginBottom: 20, background: "linear-gradient(180deg, rgba(191,255,0,0.04), transparent)" }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>CORE THESIS</div>
+            <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: "clamp(30px, 6.5vw, 54px)", color: text.hi, lineHeight: 0.98, letterSpacing: -1.5, textTransform: "uppercase" }}>
+              Making invisible structure visible under pressure.
+            </div>
+          </div>
           <Card>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: text.fainter, marginBottom: 8 }}>OPERATIONAL SCOPE</div>
-            <div style={{ fontSize: 11, color: text.dim, lineHeight: 1.7 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: text.label, marginBottom: 8 }}>OPERATIONAL SCOPE</div>
+            <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.7 }}>
               DEADLIGHT governs all visual production by ANP Studio for defense-technology contexts across six production categories: presentations, product visualization, mark systems, gallery/exhibition, collage R&D, and tactical interfaces. Tactical interfaces are governed by domain-specific subsystems (DARK RELIEF, VOL, CYPHER-IFF) that inherit DEADLIGHT's color protocol.
             </div>
           </Card>
@@ -366,21 +373,24 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
 
       {/* ═══ MATERIALS ═══ */}
       {section === "materials" && (
-        <div style={{ maxWidth: 700 }}>
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="MATERIAL REGISTERS" sub="6 registers — V2 adds DOCUMENTARY" />
           <div style={{ display: "grid", gap: 10 }}>
             {MATERIAL_REGISTERS.map((m, i) => (
               <Card key={m.name}>
+                <div style={{ marginBottom: 12 }}>
+                  <MaterialSpecimen name={m.name} />
+                </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
                   <Tag>{String(i + 1).padStart(2, "0")}</Tag>
-                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>{m.name}</span>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 18, color: text.bright }}>{m.name}</span>
                   {m.name === "DOCUMENTARY" && <Tag color={hue.red}>NEW V2</Tag>}
                 </div>
-                <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: text.faint, marginBottom: 4 }}>WHEN</div><div style={{ fontSize: 10, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: hue.red, marginBottom: 4 }}>RISK</div><div style={{ fontSize: 10, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: hue.blueLt, marginBottom: 4 }}>ANCESTRY</div><div style={{ fontSize: 10, color: text.secondary, lineHeight: 1.5 }}>{m.ancestry}</div></Card>
+                <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</div>
+                <div style={{ display: "grid", gridTemplateColumns: triCol, gap: 8 }}>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>WHEN</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.red, marginBottom: 4 }}>RISK</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.blueLt, marginBottom: 4 }}>ANCESTRY</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.ancestry}</div></Card>
                 </div>
               </Card>
             ))}
@@ -390,21 +400,24 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
 
       {/* ═══ TYPE ═══ */}
       {section === "type" && (
-        <div style={{ maxWidth: 700 }}>
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="TYPE REGISTERS" sub="5 registers — V2 adds PRODUCT" />
           <div style={{ display: "grid", gap: 10 }}>
             {TYPE_REGISTERS.map((t, i) => (
               <Card key={t.name}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
                   <Tag>{String(i + 1).padStart(2, "0")}</Tag>
-                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>{t.name}</span>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 18, color: text.bright }}>{t.name}</span>
                   {t.name === "PRODUCT" && <Tag color={hue.red}>NEW V2</Tag>}
                 </div>
-                <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>{t.desc}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: text.faint, marginBottom: 4 }}>USAGE</div><div style={{ fontSize: 10, color: text.secondary }}>{t.usage}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: text.faint, marginBottom: 4 }}>WEIGHT / SIZE</div><div style={{ fontSize: 10, color: text.secondary }}>{t.weight} / {t.size}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: hue.chartreuse, marginBottom: 4 }}>RULE</div><div style={{ fontSize: 10, color: text.secondary }}>{t.rule}</div></Card>
+                <div style={{ marginBottom: 10 }}>
+                  <TypeSpecimen name={t.name} />
+                </div>
+                <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>{t.desc}</div>
+                <div style={{ display: "grid", gridTemplateColumns: triCol, gap: 8 }}>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>USAGE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.usage}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>WEIGHT / SIZE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.weight} / {t.size}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.chartreuse, marginBottom: 4 }}>RULE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.rule}</div></Card>
                 </div>
               </Card>
             ))}
@@ -450,18 +463,33 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
 
       {/* ═══ CONTENT FUNCTIONS ═══ */}
       {section === "content" && (
-        <div style={{ maxWidth: 700 }}>
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="CONTENT FUNCTIONS" sub="7 functions — unchanged from V1" />
-          <div style={{ display: "grid", gap: 4 }}>
+          <div style={{ display: "grid", gap: narrow ? 8 : 4 }}>
             {CONTENT_FUNCTIONS.map((fn, i) => (
-              <div key={fn.name} style={{ display: "grid", gridTemplateColumns: "28px 180px 1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "10px 8px", background: i % 2 === 0 ? "transparent" : ground.card, borderBottom: `1px solid ${border.faint}` }}>
-                <span style={{ fontSize: 10, color: hue.chartreuse }}>{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ fontSize: 11, color: text.bright, fontFamily: font.display, fontWeight: 700 }}>{fn.name}</span>
-                <span style={{ fontSize: 9, color: text.faint }}>{fn.material}</span>
-                <span style={{ fontSize: 9, color: text.faint }}>{fn.type}</span>
-                <span style={{ fontSize: 9, color: text.faint }}>{fn.color}</span>
-                <span style={{ fontSize: 9, color: text.fainter }}>{fn.comp}</span>
+              narrow ? (
+              <div key={fn.name} style={{ padding: "12px 10px", background: ground.card, border: `1px solid ${border.faint}` }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+                  <span style={{ fontSize: scale.meta, color: hue.chartreuse }}>{String(i + 1).padStart(2, "0")}</span>
+                  <span style={{ fontSize: scale.body, color: text.bright, fontFamily: font.display, fontWeight: 700 }}>{fn.name}</span>
+                </div>
+                {[["MATERIAL", fn.material], ["TYPE", fn.type], ["COLOR", fn.color], ["COMP", fn.comp]].map(([k, v]) => (
+                  <div key={k} style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 8, padding: "2px 0" }}>
+                    <span style={{ fontSize: scale.micro, letterSpacing: 1.5, color: text.label }}>{k}</span>
+                    <span style={{ fontSize: scale.meta, color: text.secondary }}>{v}</span>
+                  </div>
+                ))}
               </div>
+              ) : (
+              <div key={fn.name} style={{ display: "grid", gridTemplateColumns: "28px 180px 1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "10px 8px", background: i % 2 === 0 ? "transparent" : ground.card, borderBottom: `1px solid ${border.faint}` }}>
+                <span style={{ fontSize: scale.meta, color: hue.chartreuse }}>{String(i + 1).padStart(2, "0")}</span>
+                <span style={{ fontSize: scale.body, color: text.bright, fontFamily: font.display, fontWeight: 700 }}>{fn.name}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.material}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.type}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.color}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.comp}</span>
+              </div>
+              )
             ))}
           </div>
         </div>

@@ -74,6 +74,44 @@ export const font = {
   serif: "'Georgia','Times New Roman',serif", // INSTITUTIONAL
 };
 
+// Type scale (px). Principle 04 — SCALE IS ACCOUNTABILITY: a readable floor,
+// rising to a COMMAND-scale moment that cannot be skimmed.
+export const scale = {
+  micro: 10, // smallest label floor (was 8)
+  label: 11, // metadata keys, eyebrows (was 9)
+  meta: 12, // dense data cells (was 10)
+  body: 13, // reading copy (was 11)
+  sub: 15,
+  h3: 18,
+  h2: 26,
+  command: 54, // architectural-scale thesis moment
+};
+
+// AA-safe tone for small UI labels on the canvas ground (≈6.7:1 on #0d0d0d).
+// The existing text.* ramp keeps hierarchy; use this where a sub-AA tone
+// (#555/#666) carried actual reading content.
+text.label = "#9a9a9a";
+
+// Non-color status encoding (Principle 03 + accessibility): meaning carried by
+// glyph AND label, not hue alone.
+export const status = {
+  PASS: { glyph: "✓", color: accent.chartreuse, label: "PASS" },
+  PARTIAL: { glyph: "◐", color: accent.tan, label: "PARTIAL" },
+  FAIL: { glyph: "✕", color: accent.red, label: "FAIL" },
+  "N/A": { glyph: "–", color: text.faint, label: "N/A" },
+};
+
+// Material-register specimen palette — CSS textures that demonstrate each
+// register's cognitive frame (Principle 02 — MATERIAL IS MEANING).
+export const specimen = {
+  dossier: { bg: "#cdbb98", ink: "#3a3026", accent: "#a8472e" },
+  hardware: { bg: "#1c1f22", ink: "#7d858c", accent: "#3a4047" },
+  grid: { bg: "#eceae0", ink: "#5d7fa6", accent: "#3a4f6a" },
+  terminal: { bg: "#0a0f0c", ink: "#5fae7a", accent: accent.chartreuse },
+  cinematic: { bg: "#0c1518", ink: "#86a7ad", accent: accent.red },
+  documentary: { bg: "#3a3f42", ink: "#aeb4b6", accent: "#6c7378" },
+};
+
 // Content-function → accent map (rulebook signature deck, decision matrix).
 export const fnColor = {
   "IMPACT / THESIS": accent.red,

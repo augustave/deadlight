@@ -134,11 +134,21 @@ const COMPLIANCE_DATA = [
 ];
 
 const statusColor = (s) => {
-  if (s === "PASS" || s === "COMPLIANT") return "#BFFF00";
-  if (s === "PARTIAL" || s === "IN PROGRESS") return "#c49a6c";
-  if (s === "FAIL") return "#FF2D55";
+  if (s === "PASS" || s === "COMPLIANT") return hue.chartreuse;
+  if (s === "PARTIAL" || s === "IN PROGRESS") return hue.tan;
+  if (s === "FAIL") return hue.red;
   if (s === "N/A" || s === "N/A Phase I" || s === "NOT STARTED") return text.ghost;
   return text.fainter;
+};
+
+// Non-color status channel (accessibility): a glyph so PASS/FAIL is legible
+// without relying on hue alone.
+const statusGlyph = (s) => {
+  if (s === "PASS" || s === "COMPLIANT") return "✓";
+  if (s === "FAIL") return "✕";
+  if (s === "PARTIAL" || s === "IN PROGRESS") return "◐";
+  if (s === "NOT STARTED") return "○";
+  return "–";
 };
 
 export default function StressTest({ section: sectionProp, onSectionChange }) {
@@ -248,10 +258,10 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
                 24 requirements // 7 columns // TERMINAL register // SYSTEMS type
               </div>
             </div>
-            <div style={{ display: "flex", gap: 12, fontSize: 9, color: text.fainter }}>
+            <div style={{ display: "flex", gap: 12, fontSize: 10, color: text.label }}>
               {[["PASS", hue.chartreuse], ["PARTIAL", hue.tan], ["FAIL", hue.red], ["N/A", text.ghost]].map(([l, c]) => (
                 <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <div style={{ width: 6, height: 6, background: c, borderRadius: 1 }} />
+                  <span aria-hidden="true" style={{ color: c }}>{statusGlyph(l)}</span>
                   {l}
                 </div>
               ))}
@@ -282,8 +292,9 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
                           padding: "2px 6px",
                           background: `${statusColor(r.status)}12`,
                           border: `1px solid ${statusColor(r.status)}30`,
+                          whiteSpace: "nowrap",
                         }}>
-                          {r.status}
+                          <span aria-hidden="true">{statusGlyph(r.status)}</span> {r.status}
                         </span>
                       </td>
                       <td style={{ ...cellBase, color: r.priority === "P0" ? text.bright : text.fainter }}>{r.priority}</td>
@@ -297,7 +308,7 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
           <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: text.ghost }}>
             <span>PASS: {RTM_DATA.filter(r => r.status === "PASS").length}</span>
             <span>PARTIAL: {RTM_DATA.filter(r => r.status === "PARTIAL").length}</span>
-            <span style={{ color: "#FF2D55" }}>FAIL: {RTM_DATA.filter(r => r.status === "FAIL").length}</span>
+            <span style={{ color: hue.red }}>FAIL: {RTM_DATA.filter(r => r.status === "FAIL").length}</span>
             <span>N/A: {RTM_DATA.filter(r => r.status === "N/A").length}</span>
             <span style={{ marginLeft: "auto" }}>TOTAL: {RTM_DATA.length}</span>
           </div>
@@ -382,8 +393,8 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
                           const isFirst = mi === task.start;
                           const isLast = mi === task.start + task.dur - 1;
                           const barColor = task.status === "complete" ? border.strong :
-                                          task.status === "active" ? "#BFFF00" :
-                                          task.status === "milestone" ? "#FF2D55" : border.mid;
+                                          task.status === "active" ? hue.chartreuse :
+                                          task.status === "milestone" ? hue.red : border.mid;
                           return (
                             <div key={mi} style={{
                               height: 14,
@@ -574,8 +585,9 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
                           padding: "2px 6px",
                           background: `${statusColor(r.status)}12`,
                           border: `1px solid ${statusColor(r.status)}30`,
+                          whiteSpace: "nowrap",
                         }}>
-                          {r.status}
+                          <span aria-hidden="true">{statusGlyph(r.status)}</span> {r.status}
                         </span>
                       </td>
                       <td style={{ ...cellBase, color: r.gap === "—" ? border.strong : text.secondary, fontSize: 10 }}>{r.gap}</td>
@@ -588,10 +600,10 @@ export default function StressTest({ section: sectionProp, onSectionChange }) {
             </div>
           </div>
           <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: text.ghost }}>
-            <span style={{ color: "#BFFF00" }}>COMPLIANT: {COMPLIANCE_DATA.filter(r => r.status === "COMPLIANT").length}</span>
+            <span style={{ color: hue.chartreuse }}>COMPLIANT: {COMPLIANCE_DATA.filter(r => r.status === "COMPLIANT").length}</span>
             <span>IN PROGRESS: {COMPLIANCE_DATA.filter(r => r.status === "IN PROGRESS").length}</span>
             <span>PARTIAL: {COMPLIANCE_DATA.filter(r => r.status === "PARTIAL").length}</span>
-            <span style={{ color: "#FF2D55" }}>NOT STARTED: {COMPLIANCE_DATA.filter(r => r.status === "NOT STARTED").length}</span>
+            <span style={{ color: hue.red }}>NOT STARTED: {COMPLIANCE_DATA.filter(r => r.status === "NOT STARTED").length}</span>
             <span style={{ marginLeft: "auto" }}>TOTAL: {COMPLIANCE_DATA.length}</span>
           </div>
         </div>
