@@ -9,12 +9,26 @@ const groups = [
 export default function App() {
   const [route, setRoute] = useState(() => parseRoute(window.location.hash));
   const [query, setQuery] = useState("");
+  const [printing, setPrinting] = useState(false);
 
   useEffect(() => {
     const onHash = () => setRoute(parseRoute(window.location.hash));
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
+  // Print/PDF: flip to full-spec render, let it flush, then open the print
+  // dialog (user saves as PDF). Reset once the dialog closes.
+  useEffect(() => {
+    if (!printing) return;
+    const done = () => setPrinting(false);
+    window.addEventListener("afterprint", done);
+    const id = setTimeout(() => window.print(), 80);
+    return () => {
+      window.removeEventListener("afterprint", done);
+      clearTimeout(id);
+    };
+  }, [printing]);
 
   // Keep the URL canonical as #artifact/section.
   useEffect(() => {
@@ -126,6 +140,17 @@ export default function App() {
             <span>{activeArtifact.version}</span>
             <span>{activeArtifact.date}</span>
             <span>{activeArtifact.status}</span>
+            <button
+              className="print-btn"
+              onClick={() => setPrinting(true)}
+              title={
+                activeArtifact.group === "v2"
+                  ? "Print the full rulebook (save as PDF)"
+                  : "Print this artifact (save as PDF)"
+              }
+            >
+              ⎙ Print / PDF
+            </button>
           </div>
         </header>
 
@@ -133,6 +158,7 @@ export default function App() {
           <ActiveComponent
             section={route.sectionId}
             onSectionChange={(s) => navigate(route.artifactId, s)}
+            printAll={printing}
           />
         </section>
       </main>

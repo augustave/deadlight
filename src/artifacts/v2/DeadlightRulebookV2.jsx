@@ -52,6 +52,7 @@ const SECTIONS = [
   { id: "type", label: "TYPE" },
   { id: "color", label: "COLOR" },
   { id: "content", label: "CONTENT FUNCTIONS" },
+  { id: "apply", label: "HOW TO APPLY" },
   { id: "production", label: "PRODUCTION CATEGORIES" },
   { id: "rnd", label: "R&D LAYER" },
   { id: "marks", label: "MARK SYSTEMS" },
@@ -285,7 +286,7 @@ const CHANGELOG = [
 // ═══════════════════════════════════════════
 // COMPONENT
 // ═══════════════════════════════════════════
-export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
+export default function DeadlightV2({ section: sectionProp, onSectionChange, printAll = false }) {
   const [internal, setInternal] = useState("identity");
   const section = sectionProp ?? internal;
   const setSection = onSectionChange ?? setInternal;
@@ -310,8 +311,8 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
         </div>
       </div>
 
-      {/* NAV */}
-      <div style={{ display: "flex", gap: 0, marginBottom: 32, borderBottom: `1px solid ${border.mid}`, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 10, background: ground.canvas, paddingTop: 4 }}>
+      {/* NAV — hidden when printing the full spec */}
+      <div style={{ display: printAll ? "none" : "flex", gap: 0, marginBottom: 32, borderBottom: `1px solid ${border.mid}`, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 10, background: ground.canvas, paddingTop: 4 }}>
         {SECTIONS.map(s => (
           <button key={s.id} onClick={() => setSection(s.id)} style={{
             background: section === s.id ? border.subtle : "transparent",
@@ -325,7 +326,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       </div>
 
       {/* ═══ IDENTITY ═══ */}
-      {section === "identity" && (
+      {(printAll || section === "identity") && (
         <div style={{ maxWidth: 760 }}>
           <SectionHead label="IDENTITY" sub="Etymology, thesis, operational scope" />
           <Card accent={hue.chartreuse} style={{ marginBottom: 20 }}>
@@ -353,7 +354,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ PRINCIPLES ═══ */}
-      {section === "principles" && (
+      {(printAll || section === "principles") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="GOVERNING PRINCIPLES" sub="7 principles — V2 adds 06 and 07" />
           <div style={{ display: "grid", gap: 8 }}>
@@ -372,7 +373,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ MATERIALS ═══ */}
-      {section === "materials" && (
+      {(printAll || section === "materials") && (
         <div style={{ maxWidth: 760 }}>
           <SectionHead label="MATERIAL REGISTERS" sub="6 registers — V2 adds DOCUMENTARY" />
           <div style={{ display: "grid", gap: 10 }}>
@@ -399,7 +400,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ TYPE ═══ */}
-      {section === "type" && (
+      {(printAll || section === "type") && (
         <div style={{ maxWidth: 760 }}>
           <SectionHead label="TYPE REGISTERS" sub="5 registers — V2 adds PRODUCT" />
           <div style={{ display: "grid", gap: 10 }}>
@@ -426,7 +427,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ COLOR ═══ */}
-      {section === "color" && (
+      {(printAll || section === "color") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="COLOR PROTOCOL" sub="3 functional accents + 2 base + 3 extended (V2) + 3 mark-specific (V2)" />
           {[
@@ -462,7 +463,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ CONTENT FUNCTIONS ═══ */}
-      {section === "content" && (
+      {(printAll || section === "content") && (
         <div style={{ maxWidth: 760 }}>
           <SectionHead label="CONTENT FUNCTIONS" sub="7 functions — unchanged from V1" />
           <div style={{ display: "grid", gap: narrow ? 8 : 4 }}>
@@ -495,8 +496,82 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
         </div>
       )}
 
+      {/* ═══ HOW TO APPLY (worked example) ═══ */}
+      {(printAll || section === "apply") && (
+        <div style={{ maxWidth: 760 }}>
+          <SectionHead label="HOW TO APPLY" sub="One brief, resolved through the system to a finished frame" />
+
+          {/* STEP 1 — the brief */}
+          <Card accent={hue.tan} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.tan, marginBottom: 8 }}>STEP 1 · THE BRIEF</div>
+            <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.7 }}>
+              "Open the keynote by confronting the audience with the munitions production deficit." A single, room-stopping
+              statement. No data yet, no diagram — this frame exists to make the problem undeniable.
+            </div>
+          </Card>
+
+          {/* STEP 2 — resolve the content function in the matrix */}
+          <Card accent={hue.chartreuse} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 10 }}>STEP 2 · RESOLVE THE MATRIX ROW</div>
+            <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.6, marginBottom: 12 }}>
+              A room-stopping statement is the <strong style={{ color: text.bright }}>IMPACT / THESIS</strong> content function.
+              That row dictates every decision:
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap: 8 }}>
+              {[
+                ["MATERIAL", "CINEMATIC", "the content justifies the drama — max two per deck", material.celadon],
+                ["TYPE", "COMMAND", "6 words, 60%+ frame width, edge-to-edge", hue.chartreuse],
+                ["COLOR", "BASE + RED", "red = threat / cost. one accent only", hue.red],
+                ["COMPOSITION", "FULL BLEED TYPE", "type IS the frame. no margins", hue.blueLt],
+              ].map(([k, v, why, c]) => (
+                <div key={k} style={{ background: ground.inset, border: `1px solid ${border.subtle}`, borderLeft: `3px solid ${c}`, padding: 12 }}>
+                  <div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>{k}</div>
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.sub, color: text.bright, marginBottom: 4 }}>{v}</div>
+                  <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.5 }}>{why}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* STEP 3 — the rendered frame */}
+          <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.red, margin: "18px 0 10px" }}>STEP 3 · THE FRAME</div>
+          <div style={{ position: "relative", border: `1px solid ${border.mid}`, borderRadius: 3, overflow: "hidden", aspectRatio: "16 / 9", minHeight: 220,
+            background: `radial-gradient(120% 90% at 25% 120%, rgba(134,167,173,0.30) 0%, transparent 55%),
+                        radial-gradient(90% 70% at 90% -10%, rgba(255,45,85,0.28) 0%, transparent 60%),
+                        linear-gradient(180deg, #0c1518 0%, #05090b 100%)`,
+            display: "flex", alignItems: "center", padding: narrow ? "20px" : "28px 36px" }}>
+            <div>
+              <div style={{ fontFamily: font.mono, fontSize: scale.micro, letterSpacing: 3, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>CINEMATIC · IMPACT / THESIS</div>
+              <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: "clamp(26px, 5.5vw, 50px)", lineHeight: 0.96, letterSpacing: -1.5, color: "#f4f4f4", textTransform: "uppercase" }}>
+                Seven days of<br />munitions. <span style={{ color: hue.red }}>Then nothing.</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr 1fr", gap: 8, marginTop: 10 }}>
+            {[
+              ["CINEMATIC ground", "atmospheric depth, controlled — not decoration", material.celadon],
+              ["COMMAND type", "six words, fills the frame, cannot be skimmed", hue.chartreuse],
+              ["RED, once", "marks the cost. the only accent present", hue.red],
+            ].map(([k, v, c]) => (
+              <div key={k} style={{ borderTop: `2px solid ${c}`, paddingTop: 8 }}>
+                <div style={{ fontSize: scale.micro, letterSpacing: 2, color: c, marginBottom: 3 }}>{k}</div>
+                <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.5 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+
+          <Card style={{ marginTop: 16 }}>
+            <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.7 }}>
+              Every choice traces to a row in the <Linkify text="Decision Matrix (DEADLIGHT-DM-V1)" />. The frame is not
+              designed by taste — it is <strong style={{ color: text.bright }}>resolved</strong> from the brief. That is the
+              system working: a different brief lands on a different row and produces a different, equally inevitable frame.
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* ═══ PRODUCTION CATEGORIES ═══ */}
-      {section === "production" && (
+      {(printAll || section === "production") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="PRODUCTION CATEGORIES" sub="6 categories — what DEADLIGHT governs and how" />
           <div style={{ display: "grid", gap: 10 }}>
@@ -516,7 +591,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ R&D LAYER ═══ */}
-      {section === "rnd" && (
+      {(printAll || section === "rnd") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="R&D LAYER: THE COLLAGE PRACTICE" sub="The research stratum that feeds DEADLIGHT's material vocabulary" />
           <Card accent={material.celadon} style={{ marginBottom: 20 }}>
@@ -529,7 +604,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ MARK SYSTEMS ═══ */}
-      {section === "marks" && (
+      {(printAll || section === "marks") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="MARK SYSTEMS: DIRECTION DEFENSE" sub="Governing rules for the chevron/bar identity system" />
           {MARK_RULES.map(r => <RuleRow key={r.rule} {...r} />)}
@@ -537,7 +612,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ GALLERY FORMAT ═══ */}
-      {section === "gallery" && (
+      {(printAll || section === "gallery") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="GALLERY FORMAT" sub="Border/frame system for exhibition, portfolio, and editorial use" />
           {GALLERY_RULES.map(r => <RuleRow key={r.rule} {...r} />)}
@@ -545,7 +620,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ HIERARCHY ═══ */}
-      {section === "hierarchy" && (
+      {(printAll || section === "hierarchy") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="SYSTEM HIERARCHY" sub="DEADLIGHT and its subsystems" />
           <div style={{ border: `2px solid ${hue.chartreuse}`, padding: 16, marginBottom: 16 }}>
@@ -580,7 +655,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ SCOPE BOUNDARIES ═══ */}
-      {section === "boundaries" && (
+      {(printAll || section === "boundaries") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="SCOPE BOUNDARIES" sub="What DEADLIGHT does NOT govern" />
           <div style={{ display: "grid", gap: 10 }}>
@@ -598,7 +673,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ OUTLIERS ═══ */}
-      {section === "outliers" && (
+      {(printAll || section === "outliers") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="OUTLIER AUDIT" sub="V2 updates — resolved and reclassified" />
           <div style={{ display: "grid", gap: 10 }}>
@@ -617,7 +692,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ SIGNATURE DECK ═══ */}
-      {section === "deck" && (
+      {(printAll || section === "deck") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="SIGNATURE DECK ARCHITECTURE" sub="23 slides / 4 acts / unchanged from V1" />
           {DECK_SLIDES.map(act => (
@@ -642,7 +717,7 @@ export default function DeadlightV2({ section: sectionProp, onSectionChange }) {
       )}
 
       {/* ═══ CHANGELOG ═══ */}
-      {section === "changelog" && (
+      {(printAll || section === "changelog") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="CHANGELOG" sub="Version history" />
           {CHANGELOG.map(v => (

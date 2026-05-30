@@ -23,6 +23,7 @@ export const artifacts = [
       { id: "type", label: "TYPE" },
       { id: "color", label: "COLOR" },
       { id: "content", label: "CONTENT FUNCTIONS" },
+      { id: "apply", label: "HOW TO APPLY" },
       { id: "production", label: "PRODUCTION CATEGORIES" },
       { id: "rnd", label: "R&D LAYER" },
       { id: "marks", label: "MARK SYSTEMS" },
