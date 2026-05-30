@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { accent as hue, font, ground, border, text } from "../../tokens.js";
 
 const STRESS_TESTS = [
   { id: "rtm", label: "REQUIREMENTS TRACEABILITY", short: "RTM" },
@@ -46,7 +47,7 @@ const GANTT_PHASES = [
       { name: "Monte Carlo validation (1K runs)", start: 5, dur: 3, status: "complete" },
       { name: "Phase I technical report", start: 7, dur: 2, status: "complete" },
     ],
-    color: "#555",
+    color: text.fainter,
   },
   {
     phase: "PHASE II — DEVELOPMENT",
@@ -59,7 +60,7 @@ const GANTT_PHASES = [
       { name: "Field test preparation", start: 16, dur: 2, status: "upcoming" },
       { name: "Phase II demonstration", start: 17, dur: 2, status: "milestone" },
     ],
-    color: "#BFFF00",
+    color: hue.chartreuse,
   },
   {
     phase: "PHASE III — TRANSITION",
@@ -69,7 +70,7 @@ const GANTT_PHASES = [
       { name: "Operational test & evaluation", start: 22, dur: 3, status: "upcoming" },
       { name: "Production readiness review", start: 24, dur: 2, status: "milestone" },
     ],
-    color: "#7aafff",
+    color: hue.blueLt,
   },
 ];
 const GANTT_MONTHS = ["M1","M2","M3","M4","M5","M6","M7","M8","M9","M10","M11","M12","M13","M14","M15","M16","M17","M18","M19","M20","M21","M22","M23","M24","M25","M26"];
@@ -78,7 +79,7 @@ const GANTT_MONTHS = ["M1","M2","M3","M4","M5","M6","M7","M8","M9","M10","M11","
 const ARCH_LAYERS = [
   {
     layer: "OPERATOR INTERFACE",
-    color: "#f0f0f0",
+    color: text.hi,
     subsystems: [
       { name: "C2 Dashboard", desc: "Fleet state, threat overlay, mission timeline" },
       { name: "Sensor Feed Mgr", desc: "EO/IR stream routing, PiP, annotation" },
@@ -87,7 +88,7 @@ const ARCH_LAYERS = [
   },
   {
     layer: "DECISION SUPPORT",
-    color: "#BFFF00",
+    color: hue.chartreuse,
     subsystems: [
       { name: "Threat Assessor", desc: "Multi-source fusion, classification, confidence" },
       { name: "Resource Allocator", desc: "Asset-to-task pairing, fuel/ammo budgets" },
@@ -96,7 +97,7 @@ const ARCH_LAYERS = [
   },
   {
     layer: "AUTONOMY ENGINE",
-    color: "#7aafff",
+    color: hue.blueLt,
     subsystems: [
       { name: "Swarm Coordinator", desc: "Formation, task allocation, consensus" },
       { name: "Path Planner", desc: "Obstacle avoidance, terrain following, deconfliction" },
@@ -105,7 +106,7 @@ const ARCH_LAYERS = [
   },
   {
     layer: "SENSING & COMMS",
-    color: "#c49a6c",
+    color: hue.tan,
     subsystems: [
       { name: "Sensor Suite", desc: "EO/IR, LIDAR, radar altimeter, IMU" },
       { name: "Comms Stack", desc: "Mesh radio, EMCON modes, encryption" },
@@ -133,33 +134,45 @@ const COMPLIANCE_DATA = [
 ];
 
 const statusColor = (s) => {
-  if (s === "PASS" || s === "COMPLIANT") return "#BFFF00";
-  if (s === "PARTIAL" || s === "IN PROGRESS") return "#c49a6c";
-  if (s === "FAIL") return "#FF2D55";
-  if (s === "N/A" || s === "N/A Phase I" || s === "NOT STARTED") return "#444";
-  return "#555";
+  if (s === "PASS" || s === "COMPLIANT") return hue.chartreuse;
+  if (s === "PARTIAL" || s === "IN PROGRESS") return hue.tan;
+  if (s === "FAIL") return hue.red;
+  if (s === "N/A" || s === "N/A Phase I" || s === "NOT STARTED") return text.ghost;
+  return text.fainter;
 };
 
-export default function StressTest() {
-  const [activeTest, setActiveTest] = useState("rtm");
+// Non-color status channel (accessibility): a glyph so PASS/FAIL is legible
+// without relying on hue alone.
+const statusGlyph = (s) => {
+  if (s === "PASS" || s === "COMPLIANT") return "✓";
+  if (s === "FAIL") return "✕";
+  if (s === "PARTIAL" || s === "IN PROGRESS") return "◐";
+  if (s === "NOT STARTED") return "○";
+  return "–";
+};
+
+export default function StressTest({ section: sectionProp, onSectionChange }) {
+  const [internal, setInternal] = useState("rtm");
+  const activeTest = sectionProp ?? internal;
+  const setActiveTest = onSectionChange ?? setInternal;
 
   const cellBase = {
     fontSize: 10,
     padding: "7px 8px",
-    borderBottom: "1px solid #1a1a1a",
+    borderBottom: `1px solid ${border.subtle}`,
     lineHeight: 1.4,
-    fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
+    fontFamily: font.mono,
   };
 
   const headerBase = {
     ...cellBase,
     fontSize: 9,
     letterSpacing: 2,
-    color: "#BFFF00",
-    borderBottom: "1px solid #333",
+    color: hue.chartreuse,
+    borderBottom: `1px solid ${border.strong}`,
     position: "sticky",
     top: 0,
-    background: "#0d0d0d",
+    background: ground.canvas,
     zIndex: 2,
     fontWeight: 400,
     padding: "10px 8px",
@@ -167,34 +180,34 @@ export default function StressTest() {
 
   return (
     <div style={{
-      fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
-      background: "#0d0d0d",
-      color: "#c8c8c8",
+      fontFamily: font.mono,
+      background: ground.canvas,
+      color: text.body,
       minHeight: "100vh",
       padding: "32px 24px",
       boxSizing: "border-box",
     }}>
       {/* Header */}
-      <div style={{ borderBottom: "1px solid #333", paddingBottom: 24, marginBottom: 24 }}>
-        <div style={{ fontSize: 10, letterSpacing: 4, color: "#666", marginBottom: 8 }}>
+      <div style={{ borderBottom: `1px solid ${border.strong}`, paddingBottom: 24, marginBottom: 24 }}>
+        <div style={{ fontSize: 10, letterSpacing: 4, color: text.faint, marginBottom: 8 }}>
           ANP STUDIO // VISUAL SYSTEM STRESS TEST
         </div>
         <h1 style={{
-          fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+          fontFamily: font.display,
           fontWeight: 900,
           fontSize: 28,
-          color: "#f0f0f0",
+          color: text.hi,
           margin: 0,
           letterSpacing: -1,
         }}>
           HIGH-DENSITY, LOW-DRAMA
         </h1>
-        <div style={{ fontSize: 10, color: "#555", marginTop: 8, letterSpacing: 2 }}>
+        <div style={{ fontSize: 10, color: text.fainter, marginTop: 8, letterSpacing: 2 }}>
           CAN THE SYSTEM SURVIVE THE SLIDES A DARPA PM ACTUALLY NEEDS?
         </div>
         <div style={{
           fontSize: 11,
-          color: "#666",
+          color: text.faint,
           marginTop: 16,
           maxWidth: 640,
           lineHeight: 1.6,
@@ -213,9 +226,9 @@ export default function StressTest() {
             onClick={() => setActiveTest(t.id)}
             style={{
               flex: 1,
-              background: activeTest === t.id ? "#111" : "transparent",
-              border: `1px solid ${activeTest === t.id ? "#333" : "#1a1a1a"}`,
-              color: activeTest === t.id ? "#BFFF00" : "#555",
+              background: activeTest === t.id ? border.faint : "transparent",
+              border: `1px solid ${activeTest === t.id ? border.strong : border.subtle}`,
+              color: activeTest === t.id ? hue.chartreuse : text.fainter,
               padding: "12px 8px",
               fontSize: 9,
               letterSpacing: 2,
@@ -225,7 +238,7 @@ export default function StressTest() {
               textAlign: "center",
             }}
           >
-            <div style={{ fontSize: 8, color: activeTest === t.id ? "#555" : "#333", marginBottom: 4 }}>
+            <div style={{ fontSize: 8, color: activeTest === t.id ? text.fainter : border.strong, marginBottom: 4 }}>
               STRESS TEST
             </div>
             {t.label}
@@ -238,23 +251,23 @@ export default function StressTest() {
         <div>
           <div style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <div>
-              <div style={{ fontFamily: "'Arial Black', sans-serif", fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>
+              <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>
                 Requirements Traceability Matrix
               </div>
-              <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>
+              <div style={{ fontSize: 10, color: text.fainter, marginTop: 4 }}>
                 24 requirements // 7 columns // TERMINAL register // SYSTEMS type
               </div>
             </div>
-            <div style={{ display: "flex", gap: 12, fontSize: 9, color: "#555" }}>
-              {[["PASS", "#BFFF00"], ["PARTIAL", "#c49a6c"], ["FAIL", "#FF2D55"], ["N/A", "#444"]].map(([l, c]) => (
+            <div style={{ display: "flex", gap: 12, fontSize: 10, color: text.label }}>
+              {[["PASS", hue.chartreuse], ["PARTIAL", hue.tan], ["FAIL", hue.red], ["N/A", text.ghost]].map(([l, c]) => (
                 <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <div style={{ width: 6, height: 6, background: c, borderRadius: 1 }} />
+                  <span aria-hidden="true" style={{ color: c }}>{statusGlyph(l)}</span>
                   {l}
                 </div>
               ))}
             </div>
           </div>
-          <div style={{ overflowX: "auto", border: "1px solid #1a1a1a" }}>
+          <div style={{ overflowX: "auto", border: `1px solid ${border.subtle}` }}>
             <div style={{ maxHeight: 520, overflowY: "auto", minWidth: 800 }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
@@ -266,11 +279,11 @@ export default function StressTest() {
                 </thead>
                 <tbody>
                   {RTM_DATA.map((r, i) => (
-                    <tr key={r.id} style={{ background: i % 2 === 0 ? "transparent" : "#080808" }}>
-                      <td style={{ ...cellBase, color: "#BFFF00", whiteSpace: "nowrap" }}>{r.id}</td>
-                      <td style={{ ...cellBase, color: "#ccc", minWidth: 200 }}>{r.need}</td>
-                      <td style={{ ...cellBase, color: "#666" }}>{r.spec}</td>
-                      <td style={{ ...cellBase, color: "#666" }}>{r.ver}</td>
+                    <tr key={r.id} style={{ background: i % 2 === 0 ? "transparent" : ground.card }}>
+                      <td style={{ ...cellBase, color: hue.chartreuse, whiteSpace: "nowrap" }}>{r.id}</td>
+                      <td style={{ ...cellBase, color: text.primary, minWidth: 200 }}>{r.need}</td>
+                      <td style={{ ...cellBase, color: text.faint }}>{r.spec}</td>
+                      <td style={{ ...cellBase, color: text.faint }}>{r.ver}</td>
                       <td style={{ ...cellBase }}>
                         <span style={{
                           color: statusColor(r.status),
@@ -279,22 +292,23 @@ export default function StressTest() {
                           padding: "2px 6px",
                           background: `${statusColor(r.status)}12`,
                           border: `1px solid ${statusColor(r.status)}30`,
+                          whiteSpace: "nowrap",
                         }}>
-                          {r.status}
+                          <span aria-hidden="true">{statusGlyph(r.status)}</span> {r.status}
                         </span>
                       </td>
-                      <td style={{ ...cellBase, color: r.priority === "P0" ? "#e0e0e0" : "#555" }}>{r.priority}</td>
-                      <td style={{ ...cellBase, color: "#555" }}>{r.trace}</td>
+                      <td style={{ ...cellBase, color: r.priority === "P0" ? text.bright : text.fainter }}>{r.priority}</td>
+                      <td style={{ ...cellBase, color: text.fainter }}>{r.trace}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: "#444" }}>
+          <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: text.ghost }}>
             <span>PASS: {RTM_DATA.filter(r => r.status === "PASS").length}</span>
             <span>PARTIAL: {RTM_DATA.filter(r => r.status === "PARTIAL").length}</span>
-            <span style={{ color: "#FF2D55" }}>FAIL: {RTM_DATA.filter(r => r.status === "FAIL").length}</span>
+            <span style={{ color: hue.red }}>FAIL: {RTM_DATA.filter(r => r.status === "FAIL").length}</span>
             <span>N/A: {RTM_DATA.filter(r => r.status === "N/A").length}</span>
             <span style={{ marginLeft: "auto" }}>TOTAL: {RTM_DATA.length}</span>
           </div>
@@ -305,18 +319,18 @@ export default function StressTest() {
       {activeTest === "gantt" && (
         <div>
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Arial Black', sans-serif", fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>
+            <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>
               Program Timeline — 26 Month Horizon
             </div>
-            <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>
+            <div style={{ fontSize: 10, color: text.fainter, marginTop: 4 }}>
               3 phases // 16 tasks // 2 milestones // TERMINAL register
             </div>
           </div>
-          <div style={{ overflowX: "auto", border: "1px solid #1a1a1a" }}>
+          <div style={{ overflowX: "auto", border: `1px solid ${border.subtle}` }}>
             <div style={{ minWidth: 900 }}>
               {/* Month headers */}
-              <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: "1px solid #222" }}>
-                <div style={{ ...headerBase, borderBottom: "1px solid #222" }} />
+              <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: `1px solid ${border.mid}` }}>
+                <div style={{ ...headerBase, borderBottom: `1px solid ${border.mid}` }} />
                 <div style={{ display: "grid", gridTemplateColumns: `repeat(${GANTT_MONTHS.length}, 1fr)` }}>
                   {GANTT_MONTHS.map(m => (
                     <div key={m} style={{
@@ -325,8 +339,8 @@ export default function StressTest() {
                       fontSize: 8,
                       letterSpacing: 1,
                       padding: "10px 2px",
-                      color: "#444",
-                      borderBottom: "1px solid #222",
+                      color: text.ghost,
+                      borderBottom: `1px solid ${border.mid}`,
                     }}>
                       {m}
                     </div>
@@ -339,8 +353,8 @@ export default function StressTest() {
                   <div style={{
                     display: "grid",
                     gridTemplateColumns: "200px 1fr",
-                    borderBottom: "1px solid #1a1a1a",
-                    background: "#080808",
+                    borderBottom: `1px solid ${border.subtle}`,
+                    background: ground.card,
                   }}>
                     <div style={{
                       ...cellBase,
@@ -358,11 +372,11 @@ export default function StressTest() {
                     <div key={task.name} style={{
                       display: "grid",
                       gridTemplateColumns: "200px 1fr",
-                      borderBottom: "1px solid #111",
+                      borderBottom: `1px solid ${border.faint}`,
                     }}>
                       <div style={{
                         ...cellBase,
-                        color: task.status === "complete" ? "#555" : task.status === "active" ? "#ccc" : "#444",
+                        color: task.status === "complete" ? text.fainter : task.status === "active" ? text.primary : text.ghost,
                         fontSize: 10,
                         paddingLeft: 16,
                       }}>
@@ -378,9 +392,9 @@ export default function StressTest() {
                           const inRange = mi >= task.start && mi < task.start + task.dur;
                           const isFirst = mi === task.start;
                           const isLast = mi === task.start + task.dur - 1;
-                          const barColor = task.status === "complete" ? "#333" :
-                                          task.status === "active" ? "#BFFF00" :
-                                          task.status === "milestone" ? "#FF2D55" : "#222";
+                          const barColor = task.status === "complete" ? border.strong :
+                                          task.status === "active" ? hue.chartreuse :
+                                          task.status === "milestone" ? hue.red : border.mid;
                           return (
                             <div key={mi} style={{
                               height: 14,
@@ -408,18 +422,18 @@ export default function StressTest() {
             </div>
           </div>
           {/* Now marker */}
-          <div style={{ display: "flex", gap: 12, marginTop: 12, fontSize: 9, color: "#444", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 12, marginTop: 12, fontSize: 9, color: text.ghost, alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 12, height: 4, background: "#333", opacity: 0.5 }} /> COMPLETE
+              <div style={{ width: 12, height: 4, background: border.strong, opacity: 0.5 }} /> COMPLETE
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 12, height: 4, background: "#BFFF00" }} /> ACTIVE
+              <div style={{ width: 12, height: 4, background: hue.chartreuse }} /> ACTIVE
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 12, height: 4, background: "#222" }} /> UPCOMING
+              <div style={{ width: 12, height: 4, background: border.mid }} /> UPCOMING
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div style={{ width: 12, height: 8, background: "#FF2D55" }} /> MILESTONE
+              <div style={{ width: 12, height: 8, background: hue.red }} /> MILESTONE
             </div>
           </div>
         </div>
@@ -429,18 +443,18 @@ export default function StressTest() {
       {activeTest === "arch" && (
         <div>
           <div style={{ marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Arial Black', sans-serif", fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>
+            <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>
               System Architecture — 4 Layers, 12 Subsystems
             </div>
-            <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>
+            <div style={{ fontSize: 10, color: text.fainter, marginTop: 4 }}>
               Layered stack // GRID PAPER register // INSTITUTIONAL + SYSTEMS type
             </div>
           </div>
           <div style={{ display: "grid", gap: 2 }}>
             {ARCH_LAYERS.map((layer, li) => (
               <div key={layer.layer} style={{
-                border: "1px solid #1a1a1a",
-                background: "#080808",
+                border: `1px solid ${border.subtle}`,
+                background: ground.card,
               }}>
                 {/* Layer header */}
                 <div style={{
@@ -448,7 +462,7 @@ export default function StressTest() {
                   alignItems: "center",
                   gap: 12,
                   padding: "10px 12px",
-                  borderBottom: "1px solid #111",
+                  borderBottom: `1px solid ${border.faint}`,
                 }}>
                   <div style={{
                     width: 8,
@@ -464,7 +478,7 @@ export default function StressTest() {
                     LAYER {li}: {layer.layer}
                   </div>
                   {li < ARCH_LAYERS.length - 1 && (
-                    <div style={{ marginLeft: "auto", fontSize: 8, color: "#333" }}>
+                    <div style={{ marginLeft: "auto", fontSize: 8, color: border.strong }}>
                       ▼ API BOUNDARY
                     </div>
                   )}
@@ -474,22 +488,22 @@ export default function StressTest() {
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr 1fr",
                   gap: 1,
-                  background: "#111",
+                  background: border.faint,
                 }}>
                   {layer.subsystems.map(sub => (
                     <div key={sub.name} style={{
-                      background: "#0a0a0a",
+                      background: ground.inset,
                       padding: 12,
                     }}>
                       <div style={{
                         fontSize: 11,
-                        color: "#ddd",
+                        color: text.pale,
                         marginBottom: 4,
                         fontWeight: 600,
                       }}>
                         {sub.name}
                       </div>
-                      <div style={{ fontSize: 9, color: "#555", lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 9, color: text.fainter, lineHeight: 1.5 }}>
                         {sub.desc}
                       </div>
                     </div>
@@ -502,24 +516,24 @@ export default function StressTest() {
           <div style={{
             marginTop: 16,
             padding: 12,
-            background: "#080808",
-            border: "1px solid #1a1a1a",
+            background: ground.card,
+            border: `1px solid ${border.subtle}`,
             fontSize: 10,
-            color: "#555",
+            color: text.fainter,
             display: "grid",
             gridTemplateColumns: "1fr 1fr 1fr",
             gap: 12,
           }}>
             <div>
-              <span style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2 }}>DATA FLOW </span>
+              <span style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2 }}>DATA FLOW </span>
               Operator → Decision Support: mission intent, ROE constraints, manual overrides
             </div>
             <div>
-              <span style={{ color: "#7aafff", fontSize: 9, letterSpacing: 2 }}>CONTROL FLOW </span>
+              <span style={{ color: hue.blueLt, fontSize: 9, letterSpacing: 2 }}>CONTROL FLOW </span>
               Decision Support → Autonomy: task assignments, waypoints, engagement auth
             </div>
             <div>
-              <span style={{ color: "#c49a6c", fontSize: 9, letterSpacing: 2 }}>SENSOR FLOW </span>
+              <span style={{ color: hue.tan, fontSize: 9, letterSpacing: 2 }}>SENSOR FLOW </span>
               Sensing → all layers: raw feeds, processed tracks, comm status, IFF state
             </div>
           </div>
@@ -531,15 +545,15 @@ export default function StressTest() {
         <div>
           <div style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <div>
-              <div style={{ fontFamily: "'Arial Black', sans-serif", fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>
+              <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>
                 Compliance & Standards Matrix
               </div>
-              <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>
+              <div style={{ fontSize: 10, color: text.fainter, marginTop: 4 }}>
                 14 standards // 7 columns // TERMINAL register
               </div>
             </div>
-            <div style={{ display: "flex", gap: 12, fontSize: 9, color: "#555" }}>
-              {[["COMPLIANT", "#BFFF00"], ["IN PROGRESS", "#c49a6c"], ["PARTIAL", "#c49a6c"], ["NOT STARTED", "#FF2D55"], ["N/A", "#444"]].map(([l, c]) => (
+            <div style={{ display: "flex", gap: 12, fontSize: 9, color: text.fainter }}>
+              {[["COMPLIANT", hue.chartreuse], ["IN PROGRESS", hue.tan], ["PARTIAL", hue.tan], ["NOT STARTED", hue.red], ["N/A", text.ghost]].map(([l, c]) => (
                 <div key={l} style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <div style={{ width: 6, height: 6, background: c, borderRadius: 1 }} />
                   {l}
@@ -547,7 +561,7 @@ export default function StressTest() {
               ))}
             </div>
           </div>
-          <div style={{ overflowX: "auto", border: "1px solid #1a1a1a" }}>
+          <div style={{ overflowX: "auto", border: `1px solid ${border.subtle}` }}>
             <div style={{ maxHeight: 520, overflowY: "auto", minWidth: 900 }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
@@ -559,10 +573,10 @@ export default function StressTest() {
                 </thead>
                 <tbody>
                   {COMPLIANCE_DATA.map((r, i) => (
-                    <tr key={r.standard} style={{ background: i % 2 === 0 ? "transparent" : "#080808" }}>
-                      <td style={{ ...cellBase, color: "#ccc", whiteSpace: "nowrap", fontWeight: 600 }}>{r.standard}</td>
-                      <td style={{ ...cellBase, color: "#888" }}>{r.domain}</td>
-                      <td style={{ ...cellBase, color: "#666", minWidth: 180 }}>{r.req}</td>
+                    <tr key={r.standard} style={{ background: i % 2 === 0 ? "transparent" : ground.card }}>
+                      <td style={{ ...cellBase, color: text.primary, whiteSpace: "nowrap", fontWeight: 600 }}>{r.standard}</td>
+                      <td style={{ ...cellBase, color: text.muted }}>{r.domain}</td>
+                      <td style={{ ...cellBase, color: text.faint, minWidth: 180 }}>{r.req}</td>
                       <td style={{ ...cellBase }}>
                         <span style={{
                           color: statusColor(r.status),
@@ -571,24 +585,25 @@ export default function StressTest() {
                           padding: "2px 6px",
                           background: `${statusColor(r.status)}12`,
                           border: `1px solid ${statusColor(r.status)}30`,
+                          whiteSpace: "nowrap",
                         }}>
-                          {r.status}
+                          <span aria-hidden="true">{statusGlyph(r.status)}</span> {r.status}
                         </span>
                       </td>
-                      <td style={{ ...cellBase, color: r.gap === "—" ? "#333" : "#999", fontSize: 10 }}>{r.gap}</td>
-                      <td style={{ ...cellBase, color: "#555" }}>{r.deadline}</td>
-                      <td style={{ ...cellBase, color: "#444" }}>{r.owner}</td>
+                      <td style={{ ...cellBase, color: r.gap === "—" ? border.strong : text.secondary, fontSize: 10 }}>{r.gap}</td>
+                      <td style={{ ...cellBase, color: text.fainter }}>{r.deadline}</td>
+                      <td style={{ ...cellBase, color: text.ghost }}>{r.owner}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: "#444" }}>
-            <span style={{ color: "#BFFF00" }}>COMPLIANT: {COMPLIANCE_DATA.filter(r => r.status === "COMPLIANT").length}</span>
+          <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 9, color: text.ghost }}>
+            <span style={{ color: hue.chartreuse }}>COMPLIANT: {COMPLIANCE_DATA.filter(r => r.status === "COMPLIANT").length}</span>
             <span>IN PROGRESS: {COMPLIANCE_DATA.filter(r => r.status === "IN PROGRESS").length}</span>
             <span>PARTIAL: {COMPLIANCE_DATA.filter(r => r.status === "PARTIAL").length}</span>
-            <span style={{ color: "#FF2D55" }}>NOT STARTED: {COMPLIANCE_DATA.filter(r => r.status === "NOT STARTED").length}</span>
+            <span style={{ color: hue.red }}>NOT STARTED: {COMPLIANCE_DATA.filter(r => r.status === "NOT STARTED").length}</span>
             <span style={{ marginLeft: "auto" }}>TOTAL: {COMPLIANCE_DATA.length}</span>
           </div>
         </div>
@@ -596,11 +611,11 @@ export default function StressTest() {
 
       {/* Verdict */}
       <div style={{
-        borderTop: "1px solid #222",
+        borderTop: `1px solid ${border.mid}`,
         marginTop: 40,
         paddingTop: 20,
       }}>
-        <div style={{ fontSize: 9, letterSpacing: 3, color: "#444", marginBottom: 12 }}>
+        <div style={{ fontSize: 9, letterSpacing: 3, color: text.ghost, marginBottom: 12 }}>
           STRESS TEST VERDICT
         </div>
         <div style={{
@@ -608,15 +623,15 @@ export default function StressTest() {
           gridTemplateColumns: "1fr 1fr",
           gap: 12,
           fontSize: 10,
-          color: "#666",
+          color: text.faint,
           lineHeight: 1.6,
         }}>
-          <div style={{ background: "#0a0a0a", padding: 16, border: "1px solid #1a1a1a" }}>
-            <div style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2, marginBottom: 8 }}>WHAT SURVIVES</div>
+          <div style={{ background: ground.inset, padding: 16, border: `1px solid ${border.subtle}` }}>
+            <div style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2, marginBottom: 8 }}>WHAT SURVIVES</div>
             The monospace systems voice carries data tables without strain. Chartreuse-as-status-indicator translates directly from targeting-reticle to pass/fail without any conceptual stretch. The terminal register's flat dark ground absorbs density better than any textured alternative. Alternating row shading at 4% opacity creates scanline rhythm without competing with the data. The identity holds through all four stress tests.
           </div>
-          <div style={{ background: "#0a0a0a", padding: 16, border: "1px solid #1a1a1a" }}>
-            <div style={{ color: "#FF2D55", fontSize: 9, letterSpacing: 2, marginBottom: 8 }}>WHAT TO WATCH</div>
+          <div style={{ background: ground.inset, padding: 16, border: `1px solid ${border.subtle}` }}>
+            <div style={{ color: hue.red, fontSize: 9, letterSpacing: 2, marginBottom: 8 }}>WHAT TO WATCH</div>
             The warm amber gradient from the Foundational Infrastructure frame is absent here — deliberately. The system doesn't need color compensation when the data is properly structured with status indicators and row alternation. The gradient was a crutch. These frames prove that TERMINAL + SYSTEMS + status-color protocol is sufficient for any density level. The amber variant should be reclassified as optional, not required.
           </div>
         </div>
@@ -624,13 +639,13 @@ export default function StressTest() {
 
       {/* Footer */}
       <div style={{
-        borderTop: "1px solid #1a1a1a",
+        borderTop: `1px solid ${border.subtle}`,
         marginTop: 32,
         paddingTop: 16,
         display: "flex",
         justifyContent: "space-between",
         fontSize: 9,
-        color: "#333",
+        color: border.strong,
         letterSpacing: 2,
       }}>
         <span>SYSTEM_REF: STRESS_TEST_V1</span>

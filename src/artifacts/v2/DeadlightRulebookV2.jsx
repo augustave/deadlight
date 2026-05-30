@@ -1,8 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { accent as hue, material, ground, border, text, font, scale, fnColor, intColor } from "../../tokens.js";
+import { Tag, Card, SectionHead, RuleRow } from "../../components/primitives.jsx";
+import { MaterialSpecimen, TypeSpecimen } from "../../components/specimens.jsx";
+import { useViewport } from "../../useViewport.js";
 
 // ═══════════════════════════════════════════
 // DEADLIGHT V2.0.0 — COMPLETE RULEBOOK
 // ═══════════════════════════════════════════
+
+// Cross-reference targets: doc IDs the rulebook cites → routes in this viewer.
+// Kept local (not imported from library.js) to avoid a circular import.
+const REF_TARGETS = {
+  "DEADLIGHT-DM-V1": "matrix-v1",
+  "DEADLIGHT-STF-V1": "stress-v1",
+  "DEADLIGHT-CSP-V1": "case-study-v1",
+  "DEADLIGHT-SPEC-V1.0.0": "identity-v1",
+  "DEADLIGHT-SDA-V1": "rulebook-v2/deck",
+};
+const REF_RE = new RegExp(
+  "(" +
+    Object.keys(REF_TARGETS)
+      .sort((a, b) => b.length - a.length)
+      .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      .join("|") +
+    ")",
+  "g",
+);
+
+// Renders text with cited doc IDs turned into in-app navigation links.
+function Linkify({ text }) {
+  return text.split(REF_RE).map((part, i) =>
+    REF_TARGETS[part] ? (
+      <button
+        key={i}
+        onClick={() => { window.location.hash = "#" + REF_TARGETS[part]; }}
+        style={{ background: "none", border: 0, padding: 0, font: "inherit", color: hue.chartreuse, cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 2 }}
+        title={`Open ${part}`}
+      >
+        {part}
+      </button>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
 
 const SECTIONS = [
   { id: "identity", label: "IDENTITY" },
@@ -11,6 +52,7 @@ const SECTIONS = [
   { id: "type", label: "TYPE" },
   { id: "color", label: "COLOR" },
   { id: "content", label: "CONTENT FUNCTIONS" },
+  { id: "apply", label: "HOW TO APPLY" },
   { id: "production", label: "PRODUCTION CATEGORIES" },
   { id: "rnd", label: "R&D LAYER" },
   { id: "marks", label: "MARK SYSTEMS" },
@@ -165,18 +207,18 @@ const SUBSYSTEMS = [
 ];
 
 const SCOPE_BOUNDARIES = [
-  { name: "HEAVY", status: "OUT OF SCOPE", desc: "Parallel creative practice. Cultural production, editorial, record-label-adjacent identity work. Different palette (deep green, saturated red, holographic, mint), different typography (display-forward, decorative), different compositional logic (scattered, organic). HEAVY proves DEADLIGHT's restraint is a choice. The two systems must never merge.", color: "#FF2D55" },
-  { name: "ORIGAMI UX", status: "OUT OF SCOPE", desc: "Research framework applying origami mathematics to interface design. Operates under its own theoretical system (Kawasaki's theorem, Maekawa's theorem). Not governed by DEADLIGHT material or type registers.", color: "#c49a6c" },
-  { name: "CLIENT BRAND SYSTEMS", status: "CASE-BY-CASE", desc: "Brand systems built for external clients (e.g. Apex Space satellite-bus identifiers, Anthropic Constitution Brand OS). These may borrow DEADLIGHT methodology (systematic exploration, functional color) but operate under client-specific palettes and type choices. DEADLIGHT governs the process, not the output.", color: "#7aafff" },
-  { name: "PERSONAL EDITORIAL", status: "LOOSELY GOVERNED", desc: "Social media, blog posts, commentary. May use DEADLIGHT type registers and color protocol at the designer's discretion but is not required to be fully compliant.", color: "#888" },
+  { name: "HEAVY", status: "OUT OF SCOPE", desc: "Parallel creative practice. Cultural production, editorial, record-label-adjacent identity work. Different palette (deep green, saturated red, holographic, mint), different typography (display-forward, decorative), different compositional logic (scattered, organic). HEAVY proves DEADLIGHT's restraint is a choice. The two systems must never merge.", color: hue.red },
+  { name: "ORIGAMI UX", status: "OUT OF SCOPE", desc: "Research framework applying origami mathematics to interface design. Operates under its own theoretical system (Kawasaki's theorem, Maekawa's theorem). Not governed by DEADLIGHT material or type registers.", color: hue.tan },
+  { name: "CLIENT BRAND SYSTEMS", status: "CASE-BY-CASE", desc: "Brand systems built for external clients (e.g. Apex Space satellite-bus identifiers, Anthropic Constitution Brand OS). These may borrow DEADLIGHT methodology (systematic exploration, functional color) but operate under client-specific palettes and type choices. DEADLIGHT governs the process, not the output.", color: hue.blueLt },
+  { name: "PERSONAL EDITORIAL", status: "LOOSELY GOVERNED", desc: "Social media, blog posts, commentary. May use DEADLIGHT type registers and color protocol at the designer's discretion but is not required to be fully compliant.", color: text.muted },
 ];
 
 const OUTLIERS = [
-  { frame: "Swarm Aero Paradigm", verdict: "KILL", vColor: "#FF2D55", issue: "Ceremonial photography (white gloves, rifle) with serif + gold accent. Introduces a material register used only once.", rec: "Retired. If ceremony is needed in the future, formalize as HONORARY material register with explicit rules. Until then, it's a one-off that breaks the system." },
-  { frame: "DARPAConnect (lavender)", verdict: "AUDIENCE VARIANT — CONTAINED", vColor: "#BFFF00", issue: "Lavender/periwinkle background breaks from every other palette in the system.", rec: "Permitted ONLY for DARPA partnership / ecosystem-onboarding contexts. Must never appear in the same deck as KINETICS, C2 Dossier, or any CINEMATIC-register frame." },
-  { frame: "Foundational Infrastructure (amber)", verdict: "OPTIONAL — RECLASSIFIED", vColor: "#7aafff", issue: "Warm amber-to-coral gradient. Previously classified as 'permitted for density relief.'", rec: "Reclassified to OPTIONAL after stress test proved TERMINAL register handles density without color compensation. Gradient was a crutch. Still permitted but no longer required." },
-  { frame: "100,000x Leap (prismatic)", verdict: "CINEMATIC VARIANT", vColor: "#7aafff", issue: "Holographic refraction overlay. Visually orphaned from core system.", rec: "Filed under CINEMATIC register. Prismatic/refraction effects permitted for compute/AI scaling content only." },
-  { frame: "Bloomberg terminal composite", verdict: "R&D REFERENCE — DO NOT PRESENT", vColor: "#BFFF00", issue: "Bloomberg screenshot is a research artifact, not a presentation element.", rec: "Lives in the R&D COLLAGE layer. Informs the TERMINAL register's density logic but should never appear in a client deliverable." },
+  { frame: "Swarm Aero Paradigm", verdict: "KILL", vColor: hue.red, issue: "Ceremonial photography (white gloves, rifle) with serif + gold accent. Introduces a material register used only once.", rec: "Retired. If ceremony is needed in the future, formalize as HONORARY material register with explicit rules. Until then, it's a one-off that breaks the system." },
+  { frame: "DARPAConnect (lavender)", verdict: "AUDIENCE VARIANT — CONTAINED", vColor: hue.chartreuse, issue: "Lavender/periwinkle background breaks from every other palette in the system.", rec: "Permitted ONLY for DARPA partnership / ecosystem-onboarding contexts. Must never appear in the same deck as KINETICS, C2 Dossier, or any CINEMATIC-register frame." },
+  { frame: "Foundational Infrastructure (amber)", verdict: "OPTIONAL — RECLASSIFIED", vColor: hue.blueLt, issue: "Warm amber-to-coral gradient. Previously classified as 'permitted for density relief.'", rec: "Reclassified to OPTIONAL after stress test proved TERMINAL register handles density without color compensation. Gradient was a crutch. Still permitted but no longer required." },
+  { frame: "100,000x Leap (prismatic)", verdict: "CINEMATIC VARIANT", vColor: hue.blueLt, issue: "Holographic refraction overlay. Visually orphaned from core system.", rec: "Filed under CINEMATIC register. Prismatic/refraction effects permitted for compute/AI scaling content only." },
+  { frame: "Bloomberg terminal composite", verdict: "R&D REFERENCE — DO NOT PRESENT", vColor: hue.chartreuse, issue: "Bloomberg screenshot is a research artifact, not a presentation element.", rec: "Lives in the R&D COLLAGE layer. Informs the TERMINAL register's density logic but should never appear in a client deliverable." },
 ];
 
 const DECK_SLIDES = [
@@ -244,66 +286,39 @@ const CHANGELOG = [
 // ═══════════════════════════════════════════
 // COMPONENT
 // ═══════════════════════════════════════════
-export default function DeadlightV2() {
-  const [section, setSection] = useState("identity");
-  const [expandedItem, setExpandedItem] = useState(null);
-
-  useEffect(() => { setExpandedItem(null); }, [section]);
-
-  const mono = "'SF Mono','Fira Code','Consolas',monospace";
-  const display = "'Arial Black','Helvetica Neue',sans-serif";
-
-  const Tag = ({ children, color = "#BFFF00" }) => (
-    <span style={{ fontSize: 9, letterSpacing: 1, padding: "2px 6px", background: `${color}12`, color, border: `1px solid ${color}30`, whiteSpace: "nowrap" }}>{children}</span>
-  );
-
-  const Card = ({ children, accent, style: s = {} }) => (
-    <div style={{ background: "#080808", border: "1px solid #1a1a1a", padding: 16, borderLeft: accent ? `3px solid ${accent}` : undefined, ...s }}>{children}</div>
-  );
-
-  const SectionHead = ({ label, sub }) => (
-    <div style={{ marginBottom: 24 }}>
-      <div style={{ fontFamily: display, fontWeight: 900, fontSize: 22, color: "#f0f0f0", letterSpacing: -1 }}>{label}</div>
-      {sub && <div style={{ fontSize: 10, color: "#555", marginTop: 4 }}>{sub}</div>}
-    </div>
-  );
-
-  const RuleRow = ({ rule, desc }) => (
-    <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: 16, padding: "12px 0", borderBottom: "1px solid #111" }}>
-      <div style={{ fontSize: 10, color: "#BFFF00", letterSpacing: 2, fontWeight: 600 }}>{rule}</div>
-      <div style={{ fontSize: 11, color: "#999", lineHeight: 1.7 }}>{desc}</div>
-    </div>
-  );
-
-  const intColor = v => v >= 85 ? "#FF2D55" : v >= 60 ? "#BFFF00" : v >= 40 ? "#555" : "#2a2a2a";
-  const fnColor = { "IMPACT / THESIS": "#FF2D55", "COVER / TITLE": "#444", "NARRATIVE CONTEXT": "#c49a6c", "TECHNICAL EXPLAINER": "#BFFF00", "STRATEGIC ANALYSIS": "#7aafff", "DATA / REFERENCE": "#888", "PROCESS / PROGRESSION": "#9b7aff" };
+export default function DeadlightV2({ section: sectionProp, onSectionChange, printAll = false }) {
+  const [internal, setInternal] = useState("identity");
+  const section = sectionProp ?? internal;
+  const setSection = onSectionChange ?? setInternal;
+  const { narrow } = useViewport();
+  const triCol = narrow ? "1fr" : "1fr 1fr 1fr";
 
   return (
-    <div style={{ fontFamily: mono, background: "#0d0d0d", color: "#c8c8c8", minHeight: "100vh", padding: "24px 20px", boxSizing: "border-box" }}>
+    <div style={{ fontFamily: font.mono, background: ground.canvas, color: text.body, minHeight: "100vh", padding: "24px 20px", boxSizing: "border-box" }}>
 
       {/* HEADER */}
-      <div style={{ marginBottom: 32, borderBottom: "2px solid #222", paddingBottom: 20 }}>
-        <div style={{ fontSize: 10, letterSpacing: 4, color: "#444", marginBottom: 16 }}>ANP STUDIO // VISUAL SYSTEM SPECIFICATION</div>
+      <div style={{ marginBottom: 32, borderBottom: `2px solid ${border.mid}`, paddingBottom: 20 }}>
+        <div style={{ fontSize: 10, letterSpacing: 4, color: text.ghost, marginBottom: 16 }}>ANP STUDIO // VISUAL SYSTEM SPECIFICATION</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
-          <h1 style={{ fontFamily: display, fontWeight: 900, fontSize: 48, color: "#f0f0f0", margin: 0, letterSpacing: -2 }}>DEADLIGHT</h1>
-          <Tag color="#FF2D55">V2.0.0</Tag>
+          <h1 style={{ fontFamily: font.display, fontWeight: 900, fontSize: 48, color: text.hi, margin: 0, letterSpacing: -2 }}>DEADLIGHT</h1>
+          <Tag color={hue.red}>V2.0.0</Tag>
         </div>
-        <div style={{ width: 48, height: 3, background: "#BFFF00", margin: "12px 0" }} />
-        <div style={{ fontSize: 11, color: "#666", maxWidth: 600, lineHeight: 1.6 }}>
+        <div style={{ width: 48, height: 3, background: hue.chartreuse, margin: "12px 0" }} />
+        <div style={{ fontSize: 11, color: text.faint, maxWidth: 600, lineHeight: 1.6 }}>
           Complete rulebook governing all visual production for defense-technology communication.
           6 material registers. 5 type registers. Expanded color protocol. 7 content functions.
           6 production categories. R&D layer formalization. Mark system governance. Gallery format protocol.
         </div>
       </div>
 
-      {/* NAV */}
-      <div style={{ display: "flex", gap: 0, marginBottom: 32, borderBottom: "1px solid #222", flexWrap: "wrap", position: "sticky", top: 0, zIndex: 10, background: "#0d0d0d", paddingTop: 4 }}>
+      {/* NAV — hidden when printing the full spec */}
+      <div style={{ display: printAll ? "none" : "flex", gap: 0, marginBottom: 32, borderBottom: `1px solid ${border.mid}`, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 10, background: ground.canvas, paddingTop: 4 }}>
         {SECTIONS.map(s => (
           <button key={s.id} onClick={() => setSection(s.id)} style={{
-            background: section === s.id ? "#1a1a1a" : "transparent",
-            color: section === s.id ? "#BFFF00" : "#555",
-            border: "1px solid #222", borderBottom: section === s.id ? "1px solid #0d0d0d" : "1px solid #222",
-            padding: "8px 12px", fontSize: 9, letterSpacing: 1.5, cursor: "pointer", fontFamily: mono, marginBottom: -1,
+            background: section === s.id ? border.subtle : "transparent",
+            color: section === s.id ? hue.chartreuse : text.fainter,
+            border: `1px solid ${border.mid}`, borderBottom: section === s.id ? `1px solid ${ground.canvas}` : `1px solid ${border.mid}`,
+            padding: "8px 12px", fontSize: 9, letterSpacing: 1.5, cursor: "pointer", fontFamily: font.mono, marginBottom: -1,
           }}>
             {s.label}
           </button>
@@ -311,24 +326,27 @@ export default function DeadlightV2() {
       </div>
 
       {/* ═══ IDENTITY ═══ */}
-      {section === "identity" && (
-        <div style={{ maxWidth: 640 }}>
+      {(printAll || section === "identity") && (
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="IDENTITY" sub="Etymology, thesis, operational scope" />
-          <Card accent="#BFFF00" style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 14, fontStyle: "italic", color: "#999", marginBottom: 8 }}>
-              dead·light <span style={{ fontStyle: "normal", color: "#555" }}>/ˈdedˌlīt/</span>
+          <Card accent={hue.chartreuse} style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: font.serif, fontSize: scale.sub, fontStyle: "italic", color: text.secondary, marginBottom: 8 }}>
+              dead·light <span style={{ fontStyle: "normal", color: text.label }}>/ˈdedˌlīt/</span>
             </div>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 12, color: "#777", lineHeight: 1.8, marginBottom: 12 }}>
-              <span style={{ fontStyle: "italic", color: "#555" }}>noun, nautical.</span> A fixed porthole cover fitted over a ship's window to protect against water ingress while maintaining controlled visibility. What passes through is deliberate.
+            <div style={{ fontFamily: font.serif, fontSize: scale.body, color: text.soft, lineHeight: 1.8, marginBottom: 12 }}>
+              <span style={{ fontStyle: "italic", color: text.label }}>noun, nautical.</span> A fixed porthole cover fitted over a ship's window to protect against water ingress while maintaining controlled visibility. What passes through is deliberate.
             </div>
           </Card>
-          <Card accent="#BFFF00" style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 8 }}>CORE THESIS</div>
-            <div style={{ fontFamily: display, fontWeight: 900, fontSize: 16, color: "#e0e0e0", lineHeight: 1.4 }}>Making invisible structure visible under pressure.</div>
-          </Card>
+          {/* COMMAND-scale thesis moment — Principle 04, edge-to-edge, cannot be skimmed. */}
+          <div style={{ borderLeft: `3px solid ${hue.chartreuse}`, padding: "22px 20px", marginBottom: 20, background: "linear-gradient(180deg, rgba(191,255,0,0.04), transparent)" }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>CORE THESIS</div>
+            <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: "clamp(30px, 6.5vw, 54px)", color: text.hi, lineHeight: 0.98, letterSpacing: -1.5, textTransform: "uppercase" }}>
+              Making invisible structure visible under pressure.
+            </div>
+          </div>
           <Card>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#555", marginBottom: 8 }}>OPERATIONAL SCOPE</div>
-            <div style={{ fontSize: 11, color: "#777", lineHeight: 1.7 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: text.label, marginBottom: 8 }}>OPERATIONAL SCOPE</div>
+            <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.7 }}>
               DEADLIGHT governs all visual production by ANP Studio for defense-technology contexts across six production categories: presentations, product visualization, mark systems, gallery/exhibition, collage R&D, and tactical interfaces. Tactical interfaces are governed by domain-specific subsystems (DARK RELIEF, VOL, CYPHER-IFF) that inherit DEADLIGHT's color protocol.
             </div>
           </Card>
@@ -336,18 +354,18 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ PRINCIPLES ═══ */}
-      {section === "principles" && (
+      {(printAll || section === "principles") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="GOVERNING PRINCIPLES" sub="7 principles — V2 adds 06 and 07" />
           <div style={{ display: "grid", gap: 8 }}>
             {PRINCIPLES.map(p => (
               <Card key={p.n}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
-                  <span style={{ fontSize: 10, color: "#BFFF00" }}>{p.n}</span>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 13, color: "#e0e0e0", letterSpacing: 1 }}>{p.name}</span>
-                  {(p.n === "06" || p.n === "07") && <Tag color="#FF2D55">NEW V2</Tag>}
+                  <span style={{ fontSize: 10, color: hue.chartreuse }}>{p.n}</span>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 13, color: text.bright, letterSpacing: 1 }}>{p.name}</span>
+                  {(p.n === "06" || p.n === "07") && <Tag color={hue.red}>NEW V2</Tag>}
                 </div>
-                <div style={{ fontSize: 11, color: "#888", lineHeight: 1.7 }}>{p.s}</div>
+                <div style={{ fontSize: 11, color: text.muted, lineHeight: 1.7 }}>{p.s}</div>
               </Card>
             ))}
           </div>
@@ -355,22 +373,25 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ MATERIALS ═══ */}
-      {section === "materials" && (
-        <div style={{ maxWidth: 700 }}>
+      {(printAll || section === "materials") && (
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="MATERIAL REGISTERS" sub="6 registers — V2 adds DOCUMENTARY" />
           <div style={{ display: "grid", gap: 10 }}>
             {MATERIAL_REGISTERS.map((m, i) => (
               <Card key={m.name}>
+                <div style={{ marginBottom: 12 }}>
+                  <MaterialSpecimen name={m.name} />
+                </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
                   <Tag>{String(i + 1).padStart(2, "0")}</Tag>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>{m.name}</span>
-                  {m.name === "DOCUMENTARY" && <Tag color="#FF2D55">NEW V2</Tag>}
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 18, color: text.bright }}>{m.name}</span>
+                  {m.name === "DOCUMENTARY" && <Tag color={hue.red}>NEW V2</Tag>}
                 </div>
-                <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#666", marginBottom: 4 }}>WHEN</div><div style={{ fontSize: 10, color: "#999", lineHeight: 1.5 }}>{m.when}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#FF2D55", marginBottom: 4 }}>RISK</div><div style={{ fontSize: 10, color: "#999", lineHeight: 1.5 }}>{m.risk}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#7aafff", marginBottom: 4 }}>ANCESTRY</div><div style={{ fontSize: 10, color: "#999", lineHeight: 1.5 }}>{m.ancestry}</div></Card>
+                <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 10 }}>{m.desc}</div>
+                <div style={{ display: "grid", gridTemplateColumns: triCol, gap: 8 }}>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>WHEN</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.red, marginBottom: 4 }}>RISK</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.blueLt, marginBottom: 4 }}>ANCESTRY</div><div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.ancestry}</div></Card>
                 </div>
               </Card>
             ))}
@@ -379,22 +400,25 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ TYPE ═══ */}
-      {section === "type" && (
-        <div style={{ maxWidth: 700 }}>
+      {(printAll || section === "type") && (
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="TYPE REGISTERS" sub="5 registers — V2 adds PRODUCT" />
           <div style={{ display: "grid", gap: 10 }}>
             {TYPE_REGISTERS.map((t, i) => (
               <Card key={t.name}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
                   <Tag>{String(i + 1).padStart(2, "0")}</Tag>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>{t.name}</span>
-                  {t.name === "PRODUCT" && <Tag color="#FF2D55">NEW V2</Tag>}
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 18, color: text.bright }}>{t.name}</span>
+                  {t.name === "PRODUCT" && <Tag color={hue.red}>NEW V2</Tag>}
                 </div>
-                <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.6, marginBottom: 8 }}>{t.desc}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#666", marginBottom: 4 }}>USAGE</div><div style={{ fontSize: 10, color: "#999" }}>{t.usage}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#666", marginBottom: 4 }}>WEIGHT / SIZE</div><div style={{ fontSize: 10, color: "#999" }}>{t.weight} / {t.size}</div></Card>
-                  <Card><div style={{ fontSize: 8, letterSpacing: 3, color: "#BFFF00", marginBottom: 4 }}>RULE</div><div style={{ fontSize: 10, color: "#999" }}>{t.rule}</div></Card>
+                <div style={{ marginBottom: 10 }}>
+                  <TypeSpecimen name={t.name} />
+                </div>
+                <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>{t.desc}</div>
+                <div style={{ display: "grid", gridTemplateColumns: triCol, gap: 8 }}>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>USAGE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.usage}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>WEIGHT / SIZE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.weight} / {t.size}</div></Card>
+                  <Card><div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.chartreuse, marginBottom: 4 }}>RULE</div><div style={{ fontSize: scale.meta, color: text.secondary }}>{t.rule}</div></Card>
                 </div>
               </Card>
             ))}
@@ -403,7 +427,7 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ COLOR ═══ */}
-      {section === "color" && (
+      {(printAll || section === "color") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="COLOR PROTOCOL" sub="3 functional accents + 2 base + 3 extended (V2) + 3 mark-specific (V2)" />
           {[
@@ -414,21 +438,21 @@ export default function DeadlightV2() {
           ].map(group => (
             <div key={group.label} style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
-                <div style={{ fontSize: 9, letterSpacing: 3, color: "#555" }}>{group.label}</div>
-                {group.isNew && <Tag color="#FF2D55">NEW V2</Tag>}
+                <div style={{ fontSize: 9, letterSpacing: 3, color: text.fainter }}>{group.label}</div>
+                {group.isNew && <Tag color={hue.red}>NEW V2</Tag>}
               </div>
               <div style={{ display: "grid", gap: 6 }}>
                 {group.items.map(c => (
-                  <div key={c.name} style={{ border: "1px solid #1a1a1a", padding: 14, display: "grid", gridTemplateColumns: "36px 1fr", gap: 14 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 3, background: c.swatch, border: c.swatch === "#1a1a1a" || c.swatch === "#000000" ? "1px solid #333" : "none" }} />
+                  <div key={c.name} style={{ border: `1px solid ${border.subtle}`, padding: 14, display: "grid", gridTemplateColumns: "36px 1fr", gap: 14 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 3, background: c.swatch, border: c.swatch === "#1a1a1a" || c.swatch === "#000000" ? `1px solid ${border.strong}` : "none" }} />
                     <div>
                       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontFamily: display, fontWeight: 900, fontSize: 12, color: "#e0e0e0" }}>{c.name}</span>
-                        <span style={{ fontSize: 9, color: "#555" }}>{c.swatch}</span>
+                        <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 12, color: text.bright }}>{c.name}</span>
+                        <span style={{ fontSize: 9, color: text.fainter }}>{c.swatch}</span>
                       </div>
-                      <div style={{ fontSize: 10, letterSpacing: 1, color: c.swatch === "#1a1a1a" || c.swatch === "#000000" || c.swatch === "#f5f0eb" ? "#666" : c.swatch, marginBottom: 4 }}>{c.role}</div>
-                      <div style={{ fontSize: 10, color: "#888", lineHeight: 1.5, marginBottom: 4 }}>{c.rule}</div>
-                      <div style={{ fontSize: 9, color: "#FF2D55", opacity: 0.7 }}>✕ {c.forbid}</div>
+                      <div style={{ fontSize: 10, letterSpacing: 1, color: c.swatch === "#1a1a1a" || c.swatch === "#000000" || c.swatch === "#f5f0eb" ? text.faint : c.swatch, marginBottom: 4 }}>{c.role}</div>
+                      <div style={{ fontSize: 10, color: text.muted, lineHeight: 1.5, marginBottom: 4 }}>{c.rule}</div>
+                      <div style={{ fontSize: 9, color: hue.red, opacity: 0.7 }}>✕ {c.forbid}</div>
                     </div>
                   </div>
                 ))}
@@ -439,38 +463,127 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ CONTENT FUNCTIONS ═══ */}
-      {section === "content" && (
-        <div style={{ maxWidth: 700 }}>
+      {(printAll || section === "content") && (
+        <div style={{ maxWidth: 760 }}>
           <SectionHead label="CONTENT FUNCTIONS" sub="7 functions — unchanged from V1" />
-          <div style={{ display: "grid", gap: 4 }}>
+          <div style={{ display: "grid", gap: narrow ? 8 : 4 }}>
             {CONTENT_FUNCTIONS.map((fn, i) => (
-              <div key={fn.name} style={{ display: "grid", gridTemplateColumns: "28px 180px 1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "10px 8px", background: i % 2 === 0 ? "transparent" : "#080808", borderBottom: "1px solid #111" }}>
-                <span style={{ fontSize: 10, color: "#BFFF00" }}>{String(i + 1).padStart(2, "0")}</span>
-                <span style={{ fontSize: 11, color: "#e0e0e0", fontFamily: display, fontWeight: 700 }}>{fn.name}</span>
-                <span style={{ fontSize: 9, color: "#666" }}>{fn.material}</span>
-                <span style={{ fontSize: 9, color: "#666" }}>{fn.type}</span>
-                <span style={{ fontSize: 9, color: "#666" }}>{fn.color}</span>
-                <span style={{ fontSize: 9, color: "#555" }}>{fn.comp}</span>
+              narrow ? (
+              <div key={fn.name} style={{ padding: "12px 10px", background: ground.card, border: `1px solid ${border.faint}` }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+                  <span style={{ fontSize: scale.meta, color: hue.chartreuse }}>{String(i + 1).padStart(2, "0")}</span>
+                  <span style={{ fontSize: scale.body, color: text.bright, fontFamily: font.display, fontWeight: 700 }}>{fn.name}</span>
+                </div>
+                {[["MATERIAL", fn.material], ["TYPE", fn.type], ["COLOR", fn.color], ["COMP", fn.comp]].map(([k, v]) => (
+                  <div key={k} style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 8, padding: "2px 0" }}>
+                    <span style={{ fontSize: scale.micro, letterSpacing: 1.5, color: text.label }}>{k}</span>
+                    <span style={{ fontSize: scale.meta, color: text.secondary }}>{v}</span>
+                  </div>
+                ))}
               </div>
+              ) : (
+              <div key={fn.name} style={{ display: "grid", gridTemplateColumns: "28px 180px 1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "10px 8px", background: i % 2 === 0 ? "transparent" : ground.card, borderBottom: `1px solid ${border.faint}` }}>
+                <span style={{ fontSize: scale.meta, color: hue.chartreuse }}>{String(i + 1).padStart(2, "0")}</span>
+                <span style={{ fontSize: scale.body, color: text.bright, fontFamily: font.display, fontWeight: 700 }}>{fn.name}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.material}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.type}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.color}</span>
+                <span style={{ fontSize: scale.micro, color: text.label }}>{fn.comp}</span>
+              </div>
+              )
             ))}
           </div>
         </div>
       )}
 
+      {/* ═══ HOW TO APPLY (worked example) ═══ */}
+      {(printAll || section === "apply") && (
+        <div style={{ maxWidth: 760 }}>
+          <SectionHead label="HOW TO APPLY" sub="One brief, resolved through the system to a finished frame" />
+
+          {/* STEP 1 — the brief */}
+          <Card accent={hue.tan} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.tan, marginBottom: 8 }}>STEP 1 · THE BRIEF</div>
+            <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.7 }}>
+              "Open the keynote by confronting the audience with the munitions production deficit." A single, room-stopping
+              statement. No data yet, no diagram — this frame exists to make the problem undeniable.
+            </div>
+          </Card>
+
+          {/* STEP 2 — resolve the content function in the matrix */}
+          <Card accent={hue.chartreuse} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 10 }}>STEP 2 · RESOLVE THE MATRIX ROW</div>
+            <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.6, marginBottom: 12 }}>
+              A room-stopping statement is the <strong style={{ color: text.bright }}>IMPACT / THESIS</strong> content function.
+              That row dictates every decision:
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr", gap: 8 }}>
+              {[
+                ["MATERIAL", "CINEMATIC", "the content justifies the drama — max two per deck", material.celadon],
+                ["TYPE", "COMMAND", "6 words, 60%+ frame width, edge-to-edge", hue.chartreuse],
+                ["COLOR", "BASE + RED", "red = threat / cost. one accent only", hue.red],
+                ["COMPOSITION", "FULL BLEED TYPE", "type IS the frame. no margins", hue.blueLt],
+              ].map(([k, v, why, c]) => (
+                <div key={k} style={{ background: ground.inset, border: `1px solid ${border.subtle}`, borderLeft: `3px solid ${c}`, padding: 12 }}>
+                  <div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>{k}</div>
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.sub, color: text.bright, marginBottom: 4 }}>{v}</div>
+                  <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.5 }}>{why}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* STEP 3 — the rendered frame */}
+          <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.red, margin: "18px 0 10px" }}>STEP 3 · THE FRAME</div>
+          <div style={{ position: "relative", border: `1px solid ${border.mid}`, borderRadius: 3, overflow: "hidden", aspectRatio: "16 / 9", minHeight: 220,
+            background: `radial-gradient(120% 90% at 25% 120%, rgba(134,167,173,0.30) 0%, transparent 55%),
+                        radial-gradient(90% 70% at 90% -10%, rgba(255,45,85,0.28) 0%, transparent 60%),
+                        linear-gradient(180deg, #0c1518 0%, #05090b 100%)`,
+            display: "flex", alignItems: "center", padding: narrow ? "20px" : "28px 36px" }}>
+            <div>
+              <div style={{ fontFamily: font.mono, fontSize: scale.micro, letterSpacing: 3, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>CINEMATIC · IMPACT / THESIS</div>
+              <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: "clamp(26px, 5.5vw, 50px)", lineHeight: 0.96, letterSpacing: -1.5, color: "#f4f4f4", textTransform: "uppercase" }}>
+                Seven days of<br />munitions. <span style={{ color: hue.red }}>Then nothing.</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr" : "1fr 1fr 1fr", gap: 8, marginTop: 10 }}>
+            {[
+              ["CINEMATIC ground", "atmospheric depth, controlled — not decoration", material.celadon],
+              ["COMMAND type", "six words, fills the frame, cannot be skimmed", hue.chartreuse],
+              ["RED, once", "marks the cost. the only accent present", hue.red],
+            ].map(([k, v, c]) => (
+              <div key={k} style={{ borderTop: `2px solid ${c}`, paddingTop: 8 }}>
+                <div style={{ fontSize: scale.micro, letterSpacing: 2, color: c, marginBottom: 3 }}>{k}</div>
+                <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.5 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+
+          <Card style={{ marginTop: 16 }}>
+            <div style={{ fontSize: scale.meta, color: text.dim, lineHeight: 1.7 }}>
+              Every choice traces to a row in the <Linkify text="Decision Matrix (DEADLIGHT-DM-V1)" />. The frame is not
+              designed by taste — it is <strong style={{ color: text.bright }}>resolved</strong> from the brief. That is the
+              system working: a different brief lands on a different row and produces a different, equally inevitable frame.
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* ═══ PRODUCTION CATEGORIES ═══ */}
-      {section === "production" && (
+      {(printAll || section === "production") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="PRODUCTION CATEGORIES" sub="6 categories — what DEADLIGHT governs and how" />
           <div style={{ display: "grid", gap: 10 }}>
             {PRODUCTION_CATEGORIES.map(pc => (
               <Card key={pc.id}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 14, color: "#e0e0e0" }}>{pc.name}</span>
-                  <Tag color={pc.status.includes("V2") ? "#FF2D55" : pc.status.includes("SUBSYSTEM") ? "#7aafff" : "#BFFF00"}>{pc.status}</Tag>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 14, color: text.bright }}>{pc.name}</span>
+                  <Tag color={pc.status.includes("V2") ? hue.red : pc.status.includes("SUBSYSTEM") ? hue.blueLt : hue.chartreuse}>{pc.status}</Tag>
                 </div>
-                <div style={{ fontSize: 11, color: "#999", lineHeight: 1.6, marginBottom: 10 }}>{pc.desc}</div>
-                <div style={{ fontSize: 9, color: "#555", marginBottom: 6 }}>GOVERNED BY: {pc.governed_by}</div>
-                <div style={{ fontSize: 10, color: "#777", lineHeight: 1.6, background: "#0a0a0a", padding: 10, border: "1px solid #111" }}>{pc.rules}</div>
+                <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.6, marginBottom: 10 }}>{pc.desc}</div>
+                <div style={{ fontSize: 9, color: text.fainter, marginBottom: 6 }}>GOVERNED BY: <Linkify text={pc.governed_by} /></div>
+                <div style={{ fontSize: 10, color: text.dim, lineHeight: 1.6, background: ground.inset, padding: 10, border: `1px solid ${border.faint}` }}>{pc.rules}</div>
               </Card>
             ))}
           </div>
@@ -478,11 +591,11 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ R&D LAYER ═══ */}
-      {section === "rnd" && (
+      {(printAll || section === "rnd") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="R&D LAYER: THE COLLAGE PRACTICE" sub="The research stratum that feeds DEADLIGHT's material vocabulary" />
-          <Card accent="#8FA89A" style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 12, color: "#ccc", lineHeight: 1.8 }}>
+          <Card accent={material.celadon} style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 12, color: text.primary, lineHeight: 1.8 }}>
               DEADLIGHT's material registers are extracted from the temporal collision collage practice — not invented from abstraction. The dossier register descends from classified-file composites. The grid-paper register descends from ledger-line backgrounds. The cinematic register descends from atmospheric photo composites. When this practice stops, the system's vocabulary stagnates.
             </div>
           </Card>
@@ -491,7 +604,7 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ MARK SYSTEMS ═══ */}
-      {section === "marks" && (
+      {(printAll || section === "marks") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="MARK SYSTEMS: DIRECTION DEFENSE" sub="Governing rules for the chevron/bar identity system" />
           {MARK_RULES.map(r => <RuleRow key={r.rule} {...r} />)}
@@ -499,7 +612,7 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ GALLERY FORMAT ═══ */}
-      {section === "gallery" && (
+      {(printAll || section === "gallery") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="GALLERY FORMAT" sub="Border/frame system for exhibition, portfolio, and editorial use" />
           {GALLERY_RULES.map(r => <RuleRow key={r.rule} {...r} />)}
@@ -507,33 +620,33 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ HIERARCHY ═══ */}
-      {section === "hierarchy" && (
+      {(printAll || section === "hierarchy") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="SYSTEM HIERARCHY" sub="DEADLIGHT and its subsystems" />
-          <div style={{ border: "2px solid #BFFF00", padding: 16, marginBottom: 16 }}>
+          <div style={{ border: `2px solid ${hue.chartreuse}`, padding: 16, marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-              <span style={{ fontFamily: display, fontWeight: 900, fontSize: 20, color: "#f0f0f0" }}>DEADLIGHT</span>
+              <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 20, color: text.hi }}>DEADLIGHT</span>
               <Tag>PARENT SYSTEM</Tag>
-              <Tag color="#FF2D55">V2.0.0</Tag>
+              <Tag color={hue.red}>V2.0.0</Tag>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 8, marginTop: 12, fontSize: 9, color: "#555" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: 8, marginTop: 12, fontSize: 9, color: text.fainter }}>
               {[["6","material"],["5","type"],["11","color"],["7","content"],["6","production"]].map(([n,l])=>(
-                <div key={l}><span style={{ color: "#BFFF00" }}>{n}</span> {l}</div>
+                <div key={l}><span style={{ color: hue.chartreuse }}>{n}</span> {l}</div>
               ))}
             </div>
           </div>
           <div style={{ paddingLeft: 32, display: "grid", gap: 4 }}>
             {SUBSYSTEMS.map(s => (
               <div key={s.name} style={{ display: "flex", gap: 0 }}>
-                <div style={{ width: 20, borderTop: "2px solid #333", marginTop: 16, flexShrink: 0 }} />
+                <div style={{ width: 20, borderTop: `2px solid ${border.strong}`, marginTop: 16, flexShrink: 0 }} />
                 <Card style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontFamily: display, fontWeight: 900, fontSize: 13, color: "#e0e0e0" }}>{s.name}</span>
-                    <span style={{ fontSize: 9, color: "#555" }}>{s.v}</span>
-                    {s.name === "CELLBLOCK" && <Tag color="#FF2D55">NEW V2</Tag>}
+                    <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 13, color: text.bright }}>{s.name}</span>
+                    <span style={{ fontSize: 9, color: text.fainter }}>{s.v}</span>
+                    {s.name === "CELLBLOCK" && <Tag color={hue.red}>NEW V2</Tag>}
                   </div>
-                  <div style={{ fontSize: 9, letterSpacing: 2, color: "#555", marginBottom: 4 }}>{s.domain}</div>
-                  <div style={{ fontSize: 10, color: "#777", lineHeight: 1.5 }}>{s.desc}</div>
+                  <div style={{ fontSize: 9, letterSpacing: 2, color: text.fainter, marginBottom: 4 }}>{s.domain}</div>
+                  <div style={{ fontSize: 10, color: text.dim, lineHeight: 1.5 }}>{s.desc}</div>
                 </Card>
               </div>
             ))}
@@ -542,17 +655,17 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ SCOPE BOUNDARIES ═══ */}
-      {section === "boundaries" && (
+      {(printAll || section === "boundaries") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="SCOPE BOUNDARIES" sub="What DEADLIGHT does NOT govern" />
           <div style={{ display: "grid", gap: 10 }}>
             {SCOPE_BOUNDARIES.map(b => (
               <Card key={b.name} accent={b.color}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 14, color: "#e0e0e0" }}>{b.name}</span>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 14, color: text.bright }}>{b.name}</span>
                   <Tag color={b.color}>{b.status}</Tag>
                 </div>
-                <div style={{ fontSize: 11, color: "#999", lineHeight: 1.7 }}>{b.desc}</div>
+                <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.7 }}>{b.desc}</div>
               </Card>
             ))}
           </div>
@@ -560,18 +673,18 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ OUTLIERS ═══ */}
-      {section === "outliers" && (
+      {(printAll || section === "outliers") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="OUTLIER AUDIT" sub="V2 updates — resolved and reclassified" />
           <div style={{ display: "grid", gap: 10 }}>
             {OUTLIERS.map(o => (
               <Card key={o.frame}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 8 }}>
-                  <span style={{ fontFamily: display, fontWeight: 900, fontSize: 13, color: "#e0e0e0" }}>{o.frame}</span>
+                  <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 13, color: text.bright }}>{o.frame}</span>
                   <Tag color={o.vColor}>{o.verdict}</Tag>
                 </div>
-                <div style={{ fontSize: 11, color: "#999", lineHeight: 1.6, marginBottom: 10 }}>{o.issue}</div>
-                <Card><span style={{ color: "#BFFF00", fontSize: 9, letterSpacing: 2 }}>RECOMMENDATION: </span><span style={{ fontSize: 11, color: "#888" }}>{o.rec}</span></Card>
+                <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.6, marginBottom: 10 }}>{o.issue}</div>
+                <Card><span style={{ color: hue.chartreuse, fontSize: 9, letterSpacing: 2 }}>RECOMMENDATION: </span><span style={{ fontSize: 11, color: text.muted }}>{o.rec}</span></Card>
               </Card>
             ))}
           </div>
@@ -579,22 +692,22 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ SIGNATURE DECK ═══ */}
-      {section === "deck" && (
+      {(printAll || section === "deck") && (
         <div style={{ maxWidth: 700 }}>
           <SectionHead label="SIGNATURE DECK ARCHITECTURE" sub="23 slides / 4 acts / unchanged from V1" />
           {DECK_SLIDES.map(act => (
             <div key={act.act} style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 9, letterSpacing: 3, color: "#555", padding: "8px 0", borderBottom: "1px solid #222" }}>
+              <div style={{ fontSize: 9, letterSpacing: 3, color: text.fainter, padding: "8px 0", borderBottom: `1px solid ${border.mid}` }}>
                 ACT {act.act}: {act.title}
               </div>
               {act.slides.map(s => (
-                <div key={s.n} style={{ display: "grid", gridTemplateColumns: "28px 160px 140px 1fr", gap: 8, alignItems: "center", padding: "7px 6px", borderBottom: "1px solid #111" }}>
-                  <span style={{ fontSize: 10, color: "#BFFF00" }}>{String(s.n).padStart(2, "0")}</span>
-                  <span style={{ fontSize: 11, color: "#ddd", fontFamily: display, fontWeight: 700 }}>{s.t}</span>
-                  <span style={{ fontSize: 9, color: fnColor[s.fn] || "#555" }}>{s.fn}</span>
+                <div key={s.n} style={{ display: "grid", gridTemplateColumns: "28px 160px 140px 1fr", gap: 8, alignItems: "center", padding: "7px 6px", borderBottom: `1px solid ${border.faint}` }}>
+                  <span style={{ fontSize: 10, color: hue.chartreuse }}>{String(s.n).padStart(2, "0")}</span>
+                  <span style={{ fontSize: 11, color: text.primary, fontFamily: font.display, fontWeight: 700 }}>{s.t}</span>
+                  <span style={{ fontSize: 9, color: fnColor[s.fn] || text.fainter }}>{s.fn}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                     <div style={{ height: 3, width: `${s.int}%`, background: intColor(s.int), borderRadius: 1 }} />
-                    <span style={{ fontSize: 8, color: "#444" }}>{s.int}</span>
+                    <span style={{ fontSize: 8, color: text.ghost }}>{s.int}</span>
                   </div>
                 </div>
               ))}
@@ -604,21 +717,21 @@ export default function DeadlightV2() {
       )}
 
       {/* ═══ CHANGELOG ═══ */}
-      {section === "changelog" && (
+      {(printAll || section === "changelog") && (
         <div style={{ maxWidth: 640 }}>
           <SectionHead label="CHANGELOG" sub="Version history" />
           {CHANGELOG.map(v => (
             <div key={v.version} style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 10 }}>
-                <span style={{ fontFamily: display, fontWeight: 900, fontSize: 16, color: "#e0e0e0" }}>{v.version}</span>
-                <span style={{ fontSize: 10, color: "#555" }}>{v.date}</span>
-                {v.version === "2.0.0" && <Tag color="#FF2D55">CURRENT</Tag>}
+                <span style={{ fontFamily: font.display, fontWeight: 900, fontSize: 16, color: text.bright }}>{v.version}</span>
+                <span style={{ fontSize: 10, color: text.fainter }}>{v.date}</span>
+                {v.version === "2.0.0" && <Tag color={hue.red}>CURRENT</Tag>}
               </div>
               <div style={{ display: "grid", gap: 4 }}>
                 {v.changes.map((c, i) => (
                   <div key={i} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: 8, padding: "4px 0" }}>
-                    <span style={{ fontSize: 9, color: "#BFFF00" }}>+</span>
-                    <span style={{ fontSize: 10, color: "#888", lineHeight: 1.5 }}>{c}</span>
+                    <span style={{ fontSize: 9, color: hue.chartreuse }}>+</span>
+                    <span style={{ fontSize: 10, color: text.muted, lineHeight: 1.5 }}><Linkify text={c} /></span>
                   </div>
                 ))}
               </div>
@@ -628,7 +741,7 @@ export default function DeadlightV2() {
       )}
 
       {/* FOOTER */}
-      <div style={{ borderTop: "1px solid #1a1a1a", marginTop: 40, paddingTop: 16, display: "flex", justifyContent: "space-between", fontSize: 9, color: "#333", letterSpacing: 2 }}>
+      <div style={{ borderTop: `1px solid ${border.subtle}`, marginTop: 40, paddingTop: 16, display: "flex", justifyContent: "space-between", fontSize: 9, color: text.ghoster, letterSpacing: 2 }}>
         <span>DEADLIGHT-SPEC-V2.0.0</span>
         <span>CANONICAL // ANP STUDIO</span>
       </div>

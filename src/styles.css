@@ -100,7 +100,28 @@ button {
     transform 140ms ease;
 }
 
-.artifact-button + .artifact-button {
+.sidebar-search {
+  width: 100%;
+  margin: 4px 0 12px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: #f1f0ea;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.sidebar-search::placeholder {
+  color: #6b7369;
+}
+
+.sidebar-search:focus-visible {
+  border-color: rgba(191, 255, 0, 0.45);
+  background: rgba(191, 255, 0, 0.04);
+}
+
+.artifact-nav + .artifact-nav {
   margin-top: 8px;
 }
 
@@ -126,6 +147,48 @@ button {
 .artifact-meta {
   font-size: 12px;
   color: #8f998f;
+}
+
+.artifact-button:focus-visible,
+.section-button:focus-visible {
+  outline: 2px solid rgba(191, 255, 0, 0.6);
+  outline-offset: 2px;
+}
+
+.section-list {
+  display: flex;
+  flex-direction: column;
+  margin: 6px 0 2px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.section-button {
+  border: 0;
+  background: transparent;
+  color: #8f998f;
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: color 120ms ease, background 120ms ease;
+}
+
+.section-button:hover {
+  color: #d0ddb5;
+  background: rgba(191, 255, 0, 0.05);
+}
+
+.section-button.is-active {
+  color: #bfff00;
+  background: rgba(191, 255, 0, 0.08);
+}
+
+.viewer-meta-doc {
+  font-family: "SF Mono", "Fira Code", Consolas, monospace;
+  letter-spacing: 0.06em;
 }
 
 .audit-list {
@@ -192,6 +255,53 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #0d0d0d;
   overflow: hidden;
+}
+
+.print-btn {
+  border: 1px solid rgba(191, 255, 0, 0.35);
+  background: rgba(191, 255, 0, 0.06);
+  color: #d0ddb5;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.print-btn:hover {
+  border-color: rgba(191, 255, 0, 0.6);
+  background: rgba(191, 255, 0, 0.12);
+}
+
+.print-btn:focus-visible {
+  outline: 2px solid rgba(191, 255, 0, 0.6);
+  outline-offset: 2px;
+}
+
+@media print {
+  .app-shell {
+    grid-template-columns: 1fr;
+    display: block;
+  }
+  .app-sidebar,
+  .print-btn {
+    display: none !important;
+  }
+  .app-main {
+    padding: 0;
+  }
+  .viewer-header {
+    border: 0;
+    padding: 0 0 12px;
+    margin-bottom: 0;
+  }
+  .viewer-canvas {
+    border: 0;
+  }
+  /* let dense artifact content break naturally across pages */
+  .viewer-canvas * {
+    overflow: visible !important;
+  }
 }
 
 @media (max-width: 1080px) {

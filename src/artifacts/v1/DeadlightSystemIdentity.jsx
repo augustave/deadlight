@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { accent as hue, font, ground, border, text, scale } from "../../tokens.js";
+import { MaterialSpecimen, TypeSpecimen } from "../../components/specimens.jsx";
+import { useViewport } from "../../useViewport.js";
 
 const SUBSYSTEMS = [
   {
@@ -91,8 +94,11 @@ const PRINCIPLES = [
   },
 ];
 
-export default function DeadlightIdentity() {
-  const [section, setSection] = useState("identity");
+export default function DeadlightIdentity({ section: sectionProp, onSectionChange }) {
+  const [internal, setInternal] = useState("identity");
+  const section = sectionProp ?? internal;
+  const setSection = onSectionChange ?? setInternal;
+  const { narrow } = useViewport();
 
   const sections = [
     { id: "identity", label: "IDENTITY" },
@@ -104,24 +110,24 @@ export default function DeadlightIdentity() {
 
   return (
     <div style={{
-      fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
-      background: "#0d0d0d",
-      color: "#c8c8c8",
+      fontFamily: font.mono,
+      background: ground.canvas,
+      color: text.body,
       minHeight: "100vh",
       padding: "32px 24px",
       boxSizing: "border-box",
     }}>
       {/* System Title */}
       <div style={{ marginBottom: 48 }}>
-        <div style={{ fontSize: 10, letterSpacing: 4, color: "#444", marginBottom: 24 }}>
+        <div style={{ fontSize: 10, letterSpacing: 4, color: text.ghost, marginBottom: 24 }}>
           ANP STUDIO // VISUAL SYSTEM SPECIFICATION
         </div>
 
         <h1 style={{
-          fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif",
+          fontFamily: font.display,
           fontWeight: 900,
           fontSize: 72,
-          color: "#f0f0f0",
+          color: text.hi,
           margin: 0,
           letterSpacing: -3,
           lineHeight: 0.9,
@@ -132,14 +138,14 @@ export default function DeadlightIdentity() {
         <div style={{
           width: 64,
           height: 3,
-          background: "#BFFF00",
+          background: hue.chartreuse,
           marginTop: 16,
           marginBottom: 16,
         }} />
 
         <div style={{
           fontSize: 12,
-          color: "#888",
+          color: text.muted,
           maxWidth: 560,
           lineHeight: 1.7,
         }}>
@@ -162,8 +168,8 @@ export default function DeadlightIdentity() {
             { label: "DATE", value: "2026-03-28" },
           ].map(m => (
             <div key={m.label}>
-              <div style={{ fontSize: 8, letterSpacing: 3, color: "#444", marginBottom: 4 }}>{m.label}</div>
-              <div style={{ fontSize: 12, color: "#BFFF00" }}>{m.value}</div>
+              <div style={{ fontSize: 8, letterSpacing: 3, color: text.ghost, marginBottom: 4 }}>{m.label}</div>
+              <div style={{ fontSize: 12, color: hue.chartreuse }}>{m.value}</div>
             </div>
           ))}
         </div>
@@ -174,17 +180,17 @@ export default function DeadlightIdentity() {
         display: "flex",
         gap: 0,
         marginBottom: 32,
-        borderBottom: "1px solid #222",
+        borderBottom: `1px solid ${border.mid}`,
       }}>
         {sections.map(s => (
           <button
             key={s.id}
             onClick={() => setSection(s.id)}
             style={{
-              background: section === s.id ? "#1a1a1a" : "transparent",
-              color: section === s.id ? "#BFFF00" : "#555",
-              border: "1px solid #222",
-              borderBottom: section === s.id ? "1px solid #0d0d0d" : "1px solid #222",
+              background: section === s.id ? border.subtle : "transparent",
+              color: section === s.id ? hue.chartreuse : text.fainter,
+              border: `1px solid ${border.mid}`,
+              borderBottom: section === s.id ? `1px solid ${ground.canvas}` : `1px solid ${border.mid}`,
               padding: "10px 20px",
               fontSize: 10,
               letterSpacing: 2,
@@ -205,46 +211,46 @@ export default function DeadlightIdentity() {
           <div style={{
             fontSize: 9,
             letterSpacing: 3,
-            color: "#444",
+            color: text.ghost,
             marginBottom: 24,
           }}>
             ETYMOLOGY & DEFINITION
           </div>
 
           <div style={{
-            background: "#080808",
-            border: "1px solid #1a1a1a",
+            background: ground.card,
+            border: `1px solid ${border.subtle}`,
             padding: 24,
             marginBottom: 24,
           }}>
             <div style={{
-              fontFamily: "'Georgia', 'Times New Roman', serif",
+              fontFamily: font.serif,
               fontSize: 14,
               fontStyle: "italic",
-              color: "#999",
+              color: text.secondary,
               marginBottom: 12,
               lineHeight: 1.7,
             }}>
-              dead·light <span style={{ fontStyle: "normal", color: "#555" }}>/ˈdedˌlīt/</span>
+              dead·light <span style={{ fontStyle: "normal", color: text.fainter }}>/ˈdedˌlīt/</span>
             </div>
             <div style={{
-              fontFamily: "'Georgia', serif",
+              fontFamily: font.serif,
               fontSize: 12,
-              color: "#777",
+              color: text.dim,
               lineHeight: 1.8,
               marginBottom: 16,
             }}>
-              <span style={{ fontStyle: "italic", color: "#555" }}>noun, nautical.</span> A fixed porthole cover or shutter,
+              <span style={{ fontStyle: "italic", color: text.fainter }}>noun, nautical.</span> A fixed porthole cover or shutter,
               typically of metal or heavy glass, fitted over a ship's window to protect against
               water ingress during heavy weather while maintaining controlled visibility.
               Unlike a standard port, a deadlight determines in advance what will and will not
               pass through.
             </div>
             <div style={{
-              borderTop: "1px solid #1a1a1a",
+              borderTop: `1px solid ${border.subtle}`,
               paddingTop: 16,
               fontSize: 11,
-              color: "#888",
+              color: text.muted,
               lineHeight: 1.7,
             }}>
               As a design system, DEADLIGHT encodes the same principle: every element that
@@ -256,27 +262,27 @@ export default function DeadlightIdentity() {
           </div>
 
           <div style={{
-            background: "#080808",
-            border: "1px solid #1a1a1a",
-            borderLeft: "3px solid #BFFF00",
+            background: ground.card,
+            border: `1px solid ${border.subtle}`,
+            borderLeft: `3px solid ${hue.chartreuse}`,
             padding: 20,
             marginBottom: 24,
           }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 10 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 10 }}>
               CORE THESIS
             </div>
             <div style={{
-              fontFamily: "'Arial Black', sans-serif",
+              fontFamily: font.display,
               fontWeight: 900,
               fontSize: 16,
-              color: "#e0e0e0",
+              color: text.bright,
               lineHeight: 1.4,
             }}>
               Making invisible structure visible under pressure.
             </div>
             <div style={{
               fontSize: 11,
-              color: "#777",
+              color: text.dim,
               lineHeight: 1.7,
               marginTop: 12,
             }}>
@@ -289,16 +295,16 @@ export default function DeadlightIdentity() {
           </div>
 
           <div style={{
-            background: "#080808",
-            border: "1px solid #1a1a1a",
+            background: ground.card,
+            border: `1px solid ${border.subtle}`,
             padding: 20,
           }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#555", marginBottom: 10 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: text.fainter, marginBottom: 10 }}>
               OPERATIONAL CONTEXT
             </div>
             <div style={{
               fontSize: 11,
-              color: "#777",
+              color: text.dim,
               lineHeight: 1.7,
             }}>
               DEADLIGHT governs all visual communication produced by ANP Studio for
@@ -318,17 +324,17 @@ export default function DeadlightIdentity() {
         <div style={{ display: "grid", gap: 12, maxWidth: 640 }}>
           {PRINCIPLES.map(p => (
             <div key={p.number} style={{
-              background: "#080808",
-              border: "1px solid #1a1a1a",
+              background: ground.card,
+              border: `1px solid ${border.subtle}`,
               padding: 20,
             }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 10 }}>
-                <span style={{ fontSize: 10, color: "#BFFF00" }}>{p.number}</span>
+                <span style={{ fontSize: 10, color: hue.chartreuse }}>{p.number}</span>
                 <span style={{
-                  fontFamily: "'Arial Black', sans-serif",
+                  fontFamily: font.display,
                   fontWeight: 900,
                   fontSize: 14,
-                  color: "#e0e0e0",
+                  color: text.bright,
                   letterSpacing: 1,
                 }}>
                   {p.name}
@@ -336,7 +342,7 @@ export default function DeadlightIdentity() {
               </div>
               <div style={{
                 fontSize: 11,
-                color: "#888",
+                color: text.muted,
                 lineHeight: 1.7,
               }}>
                 {p.statement}
@@ -351,47 +357,43 @@ export default function DeadlightIdentity() {
         <div style={{ maxWidth: 720 }}>
           {/* Material */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 12 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               MATERIAL REGISTERS — 5
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr 1fr" : "1fr 1fr 1fr", gap: 10 }}>
               {REGISTERS.material.map(r => (
                 <div key={r.name} style={{
-                  background: "#080808",
-                  border: "1px solid #1a1a1a",
-                  padding: "10px 16px",
-                  fontSize: 11,
-                  color: "#ccc",
-                  letterSpacing: 1,
+                  background: ground.card,
+                  border: `1px solid ${border.subtle}`,
+                  padding: 8,
                 }}>
-                  {r.name}
+                  <MaterialSpecimen name={r.name} />
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.meta, color: text.primary, letterSpacing: 1, marginTop: 8 }}>
+                    {r.name}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           {/* Type */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 12 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               TYPE REGISTERS — 4
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gap: 10 }}>
               {REGISTERS.type.map(r => (
-                <div key={r.name} style={{
-                  background: "#080808",
-                  border: "1px solid #1a1a1a",
-                  padding: "10px 16px",
-                  fontSize: 11,
-                  color: "#ccc",
-                  letterSpacing: 1,
-                }}>
-                  {r.name}
+                <div key={r.name} style={{ background: ground.card, border: `1px solid ${border.subtle}`, padding: 12 }}>
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.meta, color: text.primary, letterSpacing: 1, marginBottom: 8 }}>
+                    {r.name}
+                  </div>
+                  <TypeSpecimen name={r.name} />
                 </div>
               ))}
             </div>
           </div>
           {/* Color */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 12 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               COLOR PROTOCOL — 3 ACCENTS + 2 BASE
             </div>
             <div style={{ display: "grid", gap: 6 }}>
@@ -401,8 +403,8 @@ export default function DeadlightIdentity() {
                   gridTemplateColumns: "32px 120px 100px 1fr",
                   gap: 12,
                   alignItems: "center",
-                  background: "#080808",
-                  border: "1px solid #1a1a1a",
+                  background: ground.card,
+                  border: `1px solid ${border.subtle}`,
                   padding: "8px 12px",
                 }}>
                   <div style={{
@@ -410,28 +412,28 @@ export default function DeadlightIdentity() {
                     height: 24,
                     background: c.hex,
                     borderRadius: 2,
-                    border: c.hex === "#1a1a1a" ? "1px solid #333" : "none",
+                    border: c.hex === "#1a1a1a" ? `1px solid ${border.strong}` : "none",
                   }} />
-                  <div style={{ fontSize: 11, color: "#ccc", letterSpacing: 1 }}>{c.name}</div>
-                  <div style={{ fontSize: 9, color: "#555" }}>{c.hex}</div>
-                  <div style={{ fontSize: 10, color: "#666" }}>{c.role}</div>
+                  <div style={{ fontSize: 11, color: text.primary, letterSpacing: 1 }}>{c.name}</div>
+                  <div style={{ fontSize: 9, color: text.fainter }}>{c.hex}</div>
+                  <div style={{ fontSize: 10, color: text.faint }}>{c.role}</div>
                 </div>
               ))}
             </div>
           </div>
           {/* Content Functions */}
           <div>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: "#BFFF00", marginBottom: 12 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               CONTENT FUNCTIONS — 7
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {REGISTERS.content.map(r => (
                 <div key={r.name} style={{
-                  background: "#080808",
-                  border: "1px solid #1a1a1a",
+                  background: ground.card,
+                  border: `1px solid ${border.subtle}`,
                   padding: "10px 16px",
                   fontSize: 10,
-                  color: "#ccc",
+                  color: text.primary,
                   letterSpacing: 1,
                 }}>
                   {r.name}
@@ -445,49 +447,49 @@ export default function DeadlightIdentity() {
       {/* ============ HIERARCHY ============ */}
       {section === "hierarchy" && (
         <div style={{ maxWidth: 640 }}>
-          <div style={{ fontSize: 9, letterSpacing: 3, color: "#444", marginBottom: 24 }}>
+          <div style={{ fontSize: 9, letterSpacing: 3, color: text.ghost, marginBottom: 24 }}>
             SYSTEM HIERARCHY
           </div>
 
           {/* Parent */}
           <div style={{
-            border: "2px solid #BFFF00",
+            border: `2px solid ${hue.chartreuse}`,
             padding: 20,
             marginBottom: 2,
           }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
               <span style={{
-                fontFamily: "'Arial Black', sans-serif",
+                fontFamily: font.display,
                 fontWeight: 900,
                 fontSize: 24,
-                color: "#f0f0f0",
+                color: text.hi,
               }}>
                 DEADLIGHT
               </span>
-              <span style={{ fontSize: 9, letterSpacing: 2, color: "#BFFF00" }}>PARENT SYSTEM</span>
+              <span style={{ fontSize: 9, letterSpacing: 2, color: hue.chartreuse }}>PARENT SYSTEM</span>
             </div>
-            <div style={{ fontSize: 10, color: "#777", marginTop: 8, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 10, color: text.dim, marginTop: 8, lineHeight: 1.6 }}>
               Presentation & brand system. Governs material registers, type registers,
               color protocol, compositional patterns, and content function mapping.
             </div>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gridTemplateColumns: narrow ? "1fr 1fr" : "1fr 1fr 1fr 1fr",
               gap: 8,
               marginTop: 16,
-              fontSize: 9,
-              color: "#555",
+              fontSize: scale.meta,
+              color: text.label,
             }}>
-              <div><span style={{ color: "#BFFF00" }}>5</span> material registers</div>
-              <div><span style={{ color: "#BFFF00" }}>4</span> type registers</div>
-              <div><span style={{ color: "#BFFF00" }}>5</span> color tokens</div>
-              <div><span style={{ color: "#BFFF00" }}>7</span> content functions</div>
+              <div><span style={{ color: hue.chartreuse }}>5</span> material registers</div>
+              <div><span style={{ color: hue.chartreuse }}>4</span> type registers</div>
+              <div><span style={{ color: hue.chartreuse }}>5</span> color tokens</div>
+              <div><span style={{ color: hue.chartreuse }}>7</span> content functions</div>
             </div>
           </div>
 
           {/* Connector */}
           <div style={{
-            borderLeft: "2px solid #333",
+            borderLeft: `2px solid ${border.strong}`,
             marginLeft: 32,
             height: 24,
           }} />
@@ -503,30 +505,30 @@ export default function DeadlightIdentity() {
                 }}>
                   <div style={{
                     width: 24,
-                    borderTop: "2px solid #333",
+                    borderTop: `2px solid ${border.strong}`,
                     marginTop: 18,
                     flexShrink: 0,
                   }} />
                   <div style={{
-                    border: "1px solid #1a1a1a",
+                    border: `1px solid ${border.subtle}`,
                     padding: 16,
                     flex: 1,
-                    background: "#080808",
+                    background: ground.card,
                   }}>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
                       <span style={{
-                        fontFamily: "'Arial Black', sans-serif",
+                        fontFamily: font.display,
                         fontWeight: 900,
                         fontSize: 14,
-                        color: "#e0e0e0",
+                        color: text.bright,
                       }}>
                         {sub.name}
                       </span>
-                      <span style={{ fontSize: 9, color: "#555" }}>{sub.version}</span>
+                      <span style={{ fontSize: 9, color: text.fainter }}>{sub.version}</span>
                       <span style={{
                         fontSize: 8,
                         letterSpacing: 2,
-                        color: "#BFFF00",
+                        color: hue.chartreuse,
                         padding: "2px 6px",
                         background: "rgba(191,255,0,0.05)",
                         border: "1px solid rgba(191,255,0,0.15)",
@@ -535,17 +537,17 @@ export default function DeadlightIdentity() {
                         {sub.status}
                       </span>
                     </div>
-                    <div style={{ fontSize: 9, letterSpacing: 2, color: "#666", marginBottom: 6 }}>
+                    <div style={{ fontSize: 9, letterSpacing: 2, color: text.faint, marginBottom: 6 }}>
                       {sub.domain}
                     </div>
-                    <div style={{ fontSize: 10, color: "#777", lineHeight: 1.6 }}>
+                    <div style={{ fontSize: 10, color: text.dim, lineHeight: 1.6 }}>
                       {sub.desc}
                     </div>
                   </div>
                 </div>
                 {i < SUBSYSTEMS.length - 1 && (
                   <div style={{
-                    borderLeft: "2px solid #222",
+                    borderLeft: `2px solid ${border.mid}`,
                     marginLeft: 0,
                     height: 8,
                   }} />
@@ -559,34 +561,34 @@ export default function DeadlightIdentity() {
       {/* ============ ARTIFACTS ============ */}
       {section === "artifacts" && (
         <div style={{ maxWidth: 640 }}>
-          <div style={{ fontSize: 9, letterSpacing: 3, color: "#444", marginBottom: 24 }}>
+          <div style={{ fontSize: 9, letterSpacing: 3, color: text.ghost, marginBottom: 24 }}>
             SYSTEM ARTIFACTS — PRODUCED TO DATE
           </div>
           <div style={{ display: "grid", gap: 8 }}>
             {ARTIFACTS.map(a => (
               <div key={a.ref} style={{
                 display: "grid",
-                gridTemplateColumns: "160px 1fr",
+                gridTemplateColumns: narrow ? "1fr" : "160px 1fr",
                 gap: 16,
-                background: "#080808",
-                border: "1px solid #1a1a1a",
+                background: ground.card,
+                border: `1px solid ${border.subtle}`,
                 padding: 16,
               }}>
                 <div>
                   <div style={{
-                    fontFamily: "'Arial Black', sans-serif",
+                    fontFamily: font.display,
                     fontWeight: 900,
                     fontSize: 12,
-                    color: "#e0e0e0",
+                    color: text.bright,
                     marginBottom: 4,
                   }}>
                     {a.name}
                   </div>
-                  <div style={{ fontSize: 9, color: "#BFFF00", letterSpacing: 1 }}>
+                  <div style={{ fontSize: 9, color: hue.chartreuse, letterSpacing: 1 }}>
                     {a.ref}
                   </div>
                 </div>
-                <div style={{ fontSize: 10, color: "#777", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 10, color: text.dim, lineHeight: 1.6 }}>
                   {a.desc}
                 </div>
               </div>
@@ -596,9 +598,9 @@ export default function DeadlightIdentity() {
           <div style={{
             marginTop: 24,
             padding: 16,
-            border: "1px dashed #222",
+            border: `1px dashed ${border.mid}`,
             fontSize: 10,
-            color: "#444",
+            color: text.ghost,
             lineHeight: 1.6,
           }}>
             All artifacts carry the DEADLIGHT- prefix in their system reference.
@@ -611,13 +613,13 @@ export default function DeadlightIdentity() {
 
       {/* Footer */}
       <div style={{
-        borderTop: "1px solid #1a1a1a",
+        borderTop: `1px solid ${border.subtle}`,
         marginTop: 48,
         paddingTop: 16,
         display: "flex",
         justifyContent: "space-between",
         fontSize: 9,
-        color: "#333",
+        color: border.strong,
         letterSpacing: 2,
       }}>
         <span>SYSTEM_REF: DEADLIGHT-SPEC-V1.0.0</span>
