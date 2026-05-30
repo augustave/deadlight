@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { accent as hue, font, ground, border, text } from "../../tokens.js";
+import { accent as hue, font, ground, border, text, scale } from "../../tokens.js";
+import { MaterialSpecimen, TypeSpecimen } from "../../components/specimens.jsx";
+import { useViewport } from "../../useViewport.js";
 
 const CONTENT_FUNCTIONS = [
   {
@@ -137,6 +139,7 @@ export default function VisualSystemMatrix({ section: sectionProp, onSectionChan
   const activeSection = sectionProp ?? internal;
   const setActiveSection = onSectionChange ?? setInternal;
   const [expandedRow, setExpandedRow] = useState(null);
+  const { narrow } = useViewport();
 
   const sections = [
     { id: "matrix", label: "CONTENT → DECISIONS" },
@@ -333,11 +336,11 @@ export default function VisualSystemMatrix({ section: sectionProp, onSectionChan
               border: `1px solid ${border.subtle}`,
               padding: 20,
               display: "grid",
-              gridTemplateColumns: "160px 1fr",
+              gridTemplateColumns: narrow ? "1fr" : "160px 1fr",
               gap: 20,
             }}>
               <div>
-                <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 8 }}>
+                <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 8 }}>
                   REGISTER {String(i + 1).padStart(2, "0")}
                 </div>
                 <div style={{
@@ -349,18 +352,21 @@ export default function VisualSystemMatrix({ section: sectionProp, onSectionChan
                 }}>
                   {t.name}
                 </div>
-                <div style={{ fontSize: 10, color: text.fainter }}>
+                <div style={{ fontSize: scale.meta, color: text.label }}>
                   {t.weight}
                 </div>
-                <div style={{ fontSize: 10, color: text.fainter }}>
+                <div style={{ fontSize: scale.meta, color: text.label }}>
                   {t.size}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>
+                <div style={{ marginBottom: 10 }}>
+                  <TypeSpecimen name={t.name} />
+                </div>
+                <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 8 }}>
                   {t.desc}
                 </div>
-                <div style={{ fontSize: 10, color: text.faint }}>
+                <div style={{ fontSize: scale.meta, color: text.label }}>
                   USAGE: {t.usage}
                 </div>
               </div>
@@ -377,8 +383,11 @@ export default function VisualSystemMatrix({ section: sectionProp, onSectionChan
               border: `1px solid ${border.subtle}`,
               padding: 20,
             }}>
+              <div style={{ marginBottom: 12 }}>
+                <MaterialSpecimen name={m.name} />
+              </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 10 }}>
-                <span style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse }}>
+                <span style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span style={{
@@ -390,21 +399,21 @@ export default function VisualSystemMatrix({ section: sectionProp, onSectionChan
                   {m.name}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: text.soft, lineHeight: 1.6, marginBottom: 12 }}>
+              <div style={{ fontSize: scale.body, color: text.soft, lineHeight: 1.6, marginBottom: 12 }}>
                 {m.desc}
               </div>
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
+                gridTemplateColumns: narrow ? "1fr" : "1fr 1fr",
                 gap: 12,
               }}>
                 <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
-                  <div style={{ fontSize: 9, letterSpacing: 3, color: text.faint, marginBottom: 4 }}>WHEN</div>
-                  <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div>
+                  <div style={{ fontSize: scale.micro, letterSpacing: 2, color: text.label, marginBottom: 4 }}>WHEN</div>
+                  <div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.when}</div>
                 </div>
                 <div style={{ background: ground.inset, padding: 12, border: `1px solid ${border.subtle}` }}>
-                  <div style={{ fontSize: 9, letterSpacing: 3, color: hue.red, marginBottom: 4 }}>RISK</div>
-                  <div style={{ fontSize: 11, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div>
+                  <div style={{ fontSize: scale.micro, letterSpacing: 2, color: hue.red, marginBottom: 4 }}>RISK</div>
+                  <div style={{ fontSize: scale.meta, color: text.secondary, lineHeight: 1.5 }}>{m.risk}</div>
                 </div>
               </div>
             </div>

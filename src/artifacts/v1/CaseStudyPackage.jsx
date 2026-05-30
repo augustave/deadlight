@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { accent as hue, font, ground, border, text } from "../../tokens.js";
+import { accent as hue, font, ground, border, text, scale } from "../../tokens.js";
+import { useViewport } from "../../useViewport.js";
 
 const CASE_STUDY_FRAMEWORK = {
   structure: [
@@ -164,6 +165,7 @@ export default function CaseStudyPackage({ section: sectionProp, onSectionChange
   const [internalStudy, setInternalStudy] = useState("algorithmic-warfare");
   const [activeSection, setActiveSection] = useState("context");
 
+  const { narrow } = useViewport();
   const activeStudy = sectionProp ?? internalStudy;
   const selectStudy = (id) => {
     (onSectionChange ?? setInternalStudy)(id);
@@ -202,7 +204,7 @@ export default function CaseStudyPackage({ section: sectionProp, onSectionChange
       </div>
 
       {/* Case Study Selector */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 32 }}>
+      <div style={{ display: "flex", flexDirection: narrow ? "column" : "row", gap: 8, marginBottom: 32 }}>
         {CASE_STUDIES.map(cs => (
           <button
             key={cs.id}
@@ -504,12 +506,12 @@ export default function CaseStudyPackage({ section: sectionProp, onSectionChange
         marginTop: 40,
         paddingTop: 20,
       }}>
-        <div style={{ fontSize: 9, letterSpacing: 3, color: text.ghost, marginBottom: 12 }}>
+        <div style={{ fontSize: scale.label, letterSpacing: 3, color: text.label, marginBottom: 12 }}>
           PRODUCTION NOTES
         </div>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: narrow ? "1fr" : "1fr 1fr",
           gap: 12,
           fontSize: 10,
           color: text.fainter,

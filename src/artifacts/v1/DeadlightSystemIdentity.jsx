@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { accent as hue, font, ground, border, text } from "../../tokens.js";
+import { accent as hue, font, ground, border, text, scale } from "../../tokens.js";
+import { MaterialSpecimen, TypeSpecimen } from "../../components/specimens.jsx";
+import { useViewport } from "../../useViewport.js";
 
 const SUBSYSTEMS = [
   {
@@ -96,6 +98,7 @@ export default function DeadlightIdentity({ section: sectionProp, onSectionChang
   const [internal, setInternal] = useState("identity");
   const section = sectionProp ?? internal;
   const setSection = onSectionChange ?? setInternal;
+  const { narrow } = useViewport();
 
   const sections = [
     { id: "identity", label: "IDENTITY" },
@@ -354,40 +357,36 @@ export default function DeadlightIdentity({ section: sectionProp, onSectionChang
         <div style={{ maxWidth: 720 }}>
           {/* Material */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               MATERIAL REGISTERS — 5
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gridTemplateColumns: narrow ? "1fr 1fr" : "1fr 1fr 1fr", gap: 10 }}>
               {REGISTERS.material.map(r => (
                 <div key={r.name} style={{
                   background: ground.card,
                   border: `1px solid ${border.subtle}`,
-                  padding: "10px 16px",
-                  fontSize: 11,
-                  color: text.primary,
-                  letterSpacing: 1,
+                  padding: 8,
                 }}>
-                  {r.name}
+                  <MaterialSpecimen name={r.name} />
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.meta, color: text.primary, letterSpacing: 1, marginTop: 8 }}>
+                    {r.name}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
           {/* Type */}
           <div style={{ marginBottom: 32 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
+            <div style={{ fontSize: scale.label, letterSpacing: 3, color: hue.chartreuse, marginBottom: 12 }}>
               TYPE REGISTERS — 4
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gap: 10 }}>
               {REGISTERS.type.map(r => (
-                <div key={r.name} style={{
-                  background: ground.card,
-                  border: `1px solid ${border.subtle}`,
-                  padding: "10px 16px",
-                  fontSize: 11,
-                  color: text.primary,
-                  letterSpacing: 1,
-                }}>
-                  {r.name}
+                <div key={r.name} style={{ background: ground.card, border: `1px solid ${border.subtle}`, padding: 12 }}>
+                  <div style={{ fontFamily: font.display, fontWeight: 900, fontSize: scale.meta, color: text.primary, letterSpacing: 1, marginBottom: 8 }}>
+                    {r.name}
+                  </div>
+                  <TypeSpecimen name={r.name} />
                 </div>
               ))}
             </div>
@@ -475,11 +474,11 @@ export default function DeadlightIdentity({ section: sectionProp, onSectionChang
             </div>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gridTemplateColumns: narrow ? "1fr 1fr" : "1fr 1fr 1fr 1fr",
               gap: 8,
               marginTop: 16,
-              fontSize: 9,
-              color: text.fainter,
+              fontSize: scale.meta,
+              color: text.label,
             }}>
               <div><span style={{ color: hue.chartreuse }}>5</span> material registers</div>
               <div><span style={{ color: hue.chartreuse }}>4</span> type registers</div>
@@ -569,7 +568,7 @@ export default function DeadlightIdentity({ section: sectionProp, onSectionChang
             {ARTIFACTS.map(a => (
               <div key={a.ref} style={{
                 display: "grid",
-                gridTemplateColumns: "160px 1fr",
+                gridTemplateColumns: narrow ? "1fr" : "160px 1fr",
                 gap: 16,
                 background: ground.card,
                 border: `1px solid ${border.subtle}`,
